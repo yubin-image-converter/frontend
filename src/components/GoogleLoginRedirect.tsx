@@ -1,13 +1,15 @@
+// src/components/GoogleLoginRedirect.tsx
 import { UserCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 
-import { Button } from "@/components/ui/button.tsx";
+import { Button } from "@/components/ui/button";
 
 import { GoogleUser } from "../types/User";
 
-export function GoogleLoginButton() {
+export function GoogleLoginRedirect() {
   const [user, setUser] = useState<GoogleUser | null>(null);
 
+  // 1) 로그인 후 로컬스토리지에서 유저 정보 복원
   useEffect(() => {
     const saved = localStorage.getItem("googleUser");
     if (saved) {
@@ -20,8 +22,9 @@ export function GoogleLoginButton() {
     setUser(null);
   };
 
-  const handleLogin = () => {
-    // 🔐 Nest.js 서버에서 state 쿠키를 설정하고 리디렉트 수행
+  // 2) 로그인 시작: Nest.js로 이동
+  const startRedirect = () => {
+    // 프론트에서는 state 발급 ❌ → Nest에서 처리
     window.location.href = "http://localhost:3000/auth/signin?provider=google";
   };
 
@@ -29,14 +32,9 @@ export function GoogleLoginButton() {
     return (
       <div className="flex flex-col items-center gap-4">
         <UserCircle className="h-16 w-16 text-muted-foreground" />
-        <p className="text-center text-sm font-medium">{user.name}</p>
-        <p className="text-center text-xs text-muted-foreground">
-          {user.email}
-        </p>
-        <Button
-          className="rounded bg-red-500 px-4 py-2 text-white hover:bg-red-600"
-          onClick={handleLogout}
-        >
+        <p className="text-sm font-medium">{user.name}</p>
+        <p className="text-xs text-muted-foreground">{user.email}</p>
+        <Button onClick={handleLogout} className="bg-red-500 hover:bg-red-600">
           로그아웃
         </Button>
       </div>
@@ -44,12 +42,8 @@ export function GoogleLoginButton() {
   }
 
   return (
-    <Button
-      onClick={handleLogin}
-      className="flex items-center gap-2 bg-green-500 hover:bg-green-600"
-    >
-      <UserCircle className="h-5 w-5" />
-      Google 로그인
+    <Button onClick={startRedirect} className="bg-green-500 hover:bg-green-600">
+      <UserCircle className="mr-2 h-5 w-5" /> Google 로그인 (리디렉트)
     </Button>
   );
 }
