@@ -1,28 +1,39 @@
 import { UserCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 
-import { Button } from "@/components/ui/button.tsx";
+import { Button } from "@/components/ui/button";
+import axiosInstance from "@/lib/axiosInstance";
 
-import { GoogleUser } from "../types/User";
+interface GoogleUser {
+  name: string;
+  email: string;
+  publicId: string;
+  provider: string;
+}
 
-export function GoogleLoginButton() {
+export function AuthButton() {
   const [user, setUser] = useState<GoogleUser | null>(null);
 
   useEffect(() => {
-    const saved = localStorage.getItem("googleUser");
-    if (saved) {
-      setUser(JSON.parse(saved));
-    }
+    const fetchUser = async () => {
+      try {
+        const res = await axiosInstance.get("/users/me");
+        setUser(res.data);
+      } catch (err) {
+        console.error("유저 정보 불러오기 실패", err);
+      }
+    };
+
+    fetchUser();
   }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem("googleUser");
-    setUser(null);
+  const handleLogin = () => {
+    window.location.href = "http://localhost:3000/auth/signin?provider=google";
   };
 
-  const handleLogin = () => {
-    // 🔐 Nest.js 서버에서 state 쿠키를 설정하고 리디렉트 수행
-    window.location.href = "http://localhost:3000/auth/signin?provider=google";
+  const handleLogout = async () => {
+    await axiosInstance.get("/auth/logout");
+    setUser(null);
   };
 
   if (user) {
