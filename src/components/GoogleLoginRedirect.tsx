@@ -25,7 +25,9 @@ export function GoogleLoginRedirect() {
   // 2) 로그인 시작: Nest.js로 이동
   const startRedirect = () => {
     // 프론트에서는 state 발급 ❌ → Nest에서 처리
-    window.location.href = "http://localhost:3000/auth/signin?provider=google";
+    window.location.href =
+      import.meta.env.VITE_AUTHENTICATION_SERVER_URL +
+      "/auth/signin?provider=google";
   };
 
   if (user) {
