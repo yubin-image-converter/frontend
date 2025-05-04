@@ -15,6 +15,16 @@ export function AuthButton() {
   const [user, setUser] = useState<GoogleUser | null>(null);
 
   useEffect(() => {
+    // 1) 쿠키에 access_token 키가 있는지 확인
+    const hasToken = document.cookie
+      .split("; ")
+      .some((cookie) => cookie.startsWith("access_token="));
+    if (!hasToken) {
+      // 토큰이 없으면 fetchUser 호출하지 않고 리턴
+      return;
+    }
+
+    // 2) 토큰이 있으면 유저 정보 요청
     const fetchUser = async () => {
       try {
         const res = await axiosInstance.get("/users/me");
@@ -25,7 +35,7 @@ export function AuthButton() {
     };
 
     fetchUser();
-  }, []);
+  }, []); // 컴포넌트 마운트 시 한 번만 실행
 
   const handleLogin = () => {
     window.location.href =
