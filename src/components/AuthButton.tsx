@@ -15,27 +15,24 @@ export function AuthButton() {
   const [user, setUser] = useState<GoogleUser | null>(null);
 
   useEffect(() => {
-    // 1) 쿠키에 access_token 키가 있는지 확인
-    const hasToken = document.cookie
-      .split("; ")
-      .some((cookie) => cookie.startsWith("access_token="));
-    if (!hasToken) {
-      // 토큰이 없으면 fetchUser 호출하지 않고 리턴
-      return;
-    }
+    const token = localStorage.getItem("accessToken");
+    if (!token) return;
 
-    // 2) 토큰이 있으면 유저 정보 요청
+    // Authorization 헤더로 토큰 설정
+    axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
     const fetchUser = async () => {
       try {
         const res = await axiosInstance.get("/users/me");
         setUser(res.data);
       } catch (err) {
         console.error("유저 정보 불러오기 실패", err);
+        localStorage.removeItem("accessToken");
       }
     };
 
     fetchUser();
-  }, []); // 컴포넌트 마운트 시 한 번만 실행
+  }, []);
 
   const handleLogin = () => {
     window.location.href =
@@ -44,7 +41,8 @@ export function AuthButton() {
   };
 
   const handleLogout = async () => {
-    await axiosInstance.get("/auth/logout");
+    localStorage.removeItem("accessToken");
+    delete axiosInstance.defaults.headers.common["Authorization"];
     setUser(null);
   };
 

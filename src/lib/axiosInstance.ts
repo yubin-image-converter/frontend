@@ -1,8 +1,14 @@
 import axios from "axios";
 
-const axiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_SERVER_URL + "/api", // 공통 prefix
-  withCredentials: true, // 쿠키 포함 필수!
+const instance = axios.create({
+  baseURL: import.meta.env.VITE_API_SERVER_URL,
+  withCredentials: false,
 });
 
-export default axiosInstance;
+// 앱 시작 시 localStorage에서 토큰 불러오기
+const token = localStorage.getItem("accessToken");
+if (token) {
+  instance.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+}
+
+export default instance;
