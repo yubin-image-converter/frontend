@@ -23,7 +23,7 @@ FROM nginx:stable-alpine
 COPY --from=builder /app/dist /usr/share/nginx/html
 
 # (선택) 커스텀 nginx 설정이 있으면 아래처럼 복사
-# COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # 컨테이너 포트
 EXPOSE 80
