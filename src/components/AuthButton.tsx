@@ -15,6 +15,21 @@ export function AuthButton() {
   const [user, setUser] = useState<GoogleUser | null>(null);
 
   useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const accessToken = urlParams.get("accessToken");
+
+    if (accessToken) {
+      localStorage.setItem("accessToken", accessToken);
+      axiosInstance.defaults.headers.common["Authorization"] =
+        `Bearer ${accessToken}`;
+
+      // URL 깔끔하게 만들기
+      const cleanUrl = window.location.origin + window.location.pathname;
+      window.history.replaceState({}, document.title, cleanUrl);
+    }
+  }, []);
+
+  useEffect(() => {
     const token = localStorage.getItem("accessToken");
     if (!token) return;
 
@@ -35,11 +50,11 @@ export function AuthButton() {
   }, []);
 
   const handleLogin = () => {
-    window.location.href =
-      "https://authentication.image-converter.yubinshin.com/auth/signin?provider=google";
     // window.location.href =
-    //   import.meta.env.VITE_AUTHENTICATION_SERVER_URL +
-    //   "/auth/signin?provider=google";
+    //   "https://authentication.image-converter.yubinshin.com/auth/signin?provider=google";
+    window.location.href =
+      import.meta.env.VITE_AUTHENTICATION_SERVER_URL +
+      "/auth/signin?provider=google";
   };
 
   const handleLogout = async () => {
