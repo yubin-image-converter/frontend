@@ -1,9 +1,10 @@
-import { Routes, Route } from "react-router-dom";
+import "./App.css";
+
+import { Route, Routes } from "react-router-dom";
 
 import { AuthButton } from "./components/AuthButton";
 import { ResponsiveLayout } from "./components/ResponsiveLayout";
 import { UploadForm } from "./components/UploadForm";
-
 import OAuthCallback from "./pages/oauth/OAuthCallback"; // 추가
 
 function Home() {
