@@ -5,14 +5,11 @@ import * as path from "path";
 
 // https://vite.dev/config/
 export default defineConfig({
+  base: "/",
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "src"),
     },
   },
-  // server: {
-  //   host: "fe.yubin.localhost",
-  //   port: 5173,
-  // },
 });

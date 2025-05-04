@@ -61,6 +61,9 @@ export default tseslint.config(
           project: "./tsconfig.json",
           alwaysTryTypes: true,
         },
+        node: {
+          extensions: [".js", ".jsx", ".ts", ".tsx"],
+        },
       },
     },
   },
