@@ -16,6 +16,9 @@ function Home() {
 }
 
 function App() {
+  console.log(import.meta.env.VITE_API_SERVER_URL);
+  console.log(import.meta.env.VITE_GOOGLE_CLIENT_ID);
+  console.log(import.meta.env.VITE_AUTHENTICATION_SERVER_URL);
   return (
     <Routes>
       <Route path="/" element={<Home />} />
