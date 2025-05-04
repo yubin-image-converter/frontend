@@ -36,8 +36,10 @@ export function AuthButton() {
 
   const handleLogin = () => {
     window.location.href =
-      import.meta.env.VITE_AUTHENTICATION_SERVER_URL +
-      "/auth/signin?provider=google";
+      "https://authentication.image-converter.yubinshin.com/auth/signin?provider=google";
+    // window.location.href =
+    //   import.meta.env.VITE_AUTHENTICATION_SERVER_URL +
+    //   "/auth/signin?provider=google";
   };
 
   const handleLogout = async () => {
