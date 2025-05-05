@@ -1,3 +1,5 @@
+import axiosInstance from "@/lib/axiosInstance";
+
 export async function convertImage(
   file: File,
   format: string,
@@ -6,15 +8,12 @@ export async function convertImage(
   formData.append("file", file);
   formData.append("format", format);
 
-  const response = await fetch("http://localhost:8080/api/convert", {
-    method: "POST",
-    body: formData,
+  const response = await axiosInstance.post("/converts", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+    withCredentials: true, // 쿠키 사용
   });
 
-  if (!response.ok) {
-    throw new Error("변환 실패");
-  }
-
-  const data = await response.json();
-  return data.imageUrl;
+  return response.data.imageUrl;
 }
