@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import axiosInstance from "@/lib/axiosInstance";
+import { getCookie } from "@/utils/getCookie";
 
 interface GoogleUser {
   name: string;
@@ -18,22 +19,37 @@ export function AuthButton() {
     const urlParams = new URLSearchParams(window.location.search);
     const accessToken = urlParams.get("accessToken");
 
+    // AuthButton.tsx - useEffect 안
     if (accessToken) {
-      localStorage.setItem("accessToken", accessToken);
-      axiosInstance.defaults.headers.common["Authorization"] =
-        `Bearer ${accessToken}`;
+      // 쿠키에 저장 (1시간 유효)
+      document.cookie = `accessToken=${accessToken}; path=/; max-age=3600`;
 
-      // URL 깔끔하게 만들기
+      // URL 정리
       const cleanUrl = window.location.origin + window.location.pathname;
       window.history.replaceState({}, document.title, cleanUrl);
     }
+
+    // if (accessToken) {
+    //   localStorage.setItem("accessToken", accessToken);
+    //   axiosInstance.defaults.headers.common["Authorization"] =
+    //     `Bearer ${accessToken}`;
+
+    //   // URL 깔끔하게 만들기
+    //   const cleanUrl = window.location.origin + window.location.pathname;
+    //   window.history.replaceState({}, document.title, cleanUrl);
+    // }
   }, []);
 
   useEffect(() => {
-    const token = localStorage.getItem("accessToken");
+    // const token = localStorage.getItem("accessToken");
+    // if (!token) return;
+
+    // // Authorization 헤더로 토큰 설정
+    // axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
+    const token = getCookie("accessToken");
     if (!token) return;
 
-    // Authorization 헤더로 토큰 설정
     axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
     const fetchUser = async () => {
@@ -58,10 +74,18 @@ export function AuthButton() {
   };
 
   const handleLogout = async () => {
-    localStorage.removeItem("accessToken");
+    // 쿠키 제거 (expires로 무효화)
+    document.cookie = "accessToken=; path=/; max-age=0";
+
     delete axiosInstance.defaults.headers.common["Authorization"];
     setUser(null);
   };
+
+  // const handleLogout = async () => {
+  //   localStorage.removeItem("accessToken");
+  //   delete axiosInstance.defaults.headers.common["Authorization"];
+  //   setUser(null);
+  // };
 
   if (user) {
     return (

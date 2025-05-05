@@ -31,6 +31,7 @@ export function GoogleLoginRedirect() {
   };
 
   if (user) {
+    console.log(user);
     return (
       <div className="flex flex-col items-center gap-4">
         <UserCircle className="h-16 w-16 text-muted-foreground" />
