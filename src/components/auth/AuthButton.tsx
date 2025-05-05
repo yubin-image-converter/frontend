@@ -28,25 +28,9 @@ export function AuthButton() {
       const cleanUrl = window.location.origin + window.location.pathname;
       window.history.replaceState({}, document.title, cleanUrl);
     }
-
-    // if (accessToken) {
-    //   localStorage.setItem("accessToken", accessToken);
-    //   axiosInstance.defaults.headers.common["Authorization"] =
-    //     `Bearer ${accessToken}`;
-
-    //   // URL 깔끔하게 만들기
-    //   const cleanUrl = window.location.origin + window.location.pathname;
-    //   window.history.replaceState({}, document.title, cleanUrl);
-    // }
   }, []);
 
   useEffect(() => {
-    // const token = localStorage.getItem("accessToken");
-    // if (!token) return;
-
-    // // Authorization 헤더로 토큰 설정
-    // axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-
     const token = getCookie("accessToken");
     if (!token) return;
 
@@ -66,8 +50,6 @@ export function AuthButton() {
   }, []);
 
   const handleLogin = () => {
-    // window.location.href =
-    //   "https://authentication.image-converter.yubinshin.com/auth/signin?provider=google";
     window.location.href =
       import.meta.env.VITE_AUTHENTICATION_SERVER_URL +
       "/auth/signin?provider=google";
@@ -80,12 +62,6 @@ export function AuthButton() {
     delete axiosInstance.defaults.headers.common["Authorization"];
     setUser(null);
   };
-
-  // const handleLogout = async () => {
-  //   localStorage.removeItem("accessToken");
-  //   delete axiosInstance.defaults.headers.common["Authorization"];
-  //   setUser(null);
-  // };
 
   if (user) {
     return (
