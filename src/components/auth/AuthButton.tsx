@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import axiosInstance from "@/lib/axiosInstance";
+import { setCurrentUser } from "@/lib/userStore";
 import { getCookie } from "@/utils/getCookie";
 
 interface GoogleUser {
@@ -40,6 +41,8 @@ export function AuthButton() {
       try {
         const res = await axiosInstance.get("/users/me");
         setUser(res.data);
+        setCurrentUser(res.data);
+        // console.log(res.data);
       } catch (err) {
         console.error("유저 정보 불러오기 실패", err);
         localStorage.removeItem("accessToken");

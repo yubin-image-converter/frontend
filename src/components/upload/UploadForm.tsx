@@ -3,21 +3,47 @@ import "react-loading-skeleton/dist/skeleton.css";
 import { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import Skeleton from "react-loading-skeleton";
-
-import { convertImage } from "@/lib/convertImage";
+import { CloudUpload } from "lucide-react"; // 아이콘
 
 import { Button } from "../ui/button";
 import { ConvertedImagePreview } from "./ConvertedImagePreview";
+import { ProgressBar } from "./ProgressBar";
+import { StatusMessage } from "./StatusMessage";
 
 const formatOptions = ["jpg", "png", "webp"] as const;
 type Format = (typeof formatOptions)[number];
 
-export function UploadForm() {
+interface UploadFormProps {
+  setPercent: (n: number) => void;
+  setStatus: (status: "idle" | "converting" | "success" | "error") => void;
+  setConvertedImageUrl: (url: string) => void;
+  percent: number;
+  status: "idle" | "converting" | "success" | "error";
+}
+
+export function UploadForm({
+  setPercent,
+  setStatus,
+  setConvertedImageUrl,
+  percent,
+  status,
+}: UploadFormProps) {
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [convertedUrl, setConvertedUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [format, setFormat] = useState<Format>("jpg");
+
+  const resetForm = () => {
+    setFile(null);
+    setPreviewUrl(null);
+    setConvertedUrl(null);
+    setFormat("jpg");
+    setLoading(false);
+    setPercent(0);
+    setStatus("idle");
+    setConvertedImageUrl("");
+  };
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const selected = acceptedFiles[0];
@@ -40,42 +66,59 @@ export function UploadForm() {
 
   const handleConvert = async () => {
     if (!file) return;
+
     setLoading(true);
-    try {
-      const url = await convertImage(file, format); // format도 전달
-      setConvertedUrl(url);
-    } catch (e) {
-      alert("이미지 변환 실패");
-    } finally {
-      setLoading(false);
-    }
+    setStatus("converting");
+    setPercent(0);
+    setConvertedImageUrl("");
+
+    let progress = 0;
+    const interval = setInterval(() => {
+      progress += 20;
+      setPercent(progress);
+
+      if (progress >= 100) {
+        clearInterval(interval);
+
+        const fakeUrl = "https://placekitten.com/400/300";
+        setConvertedUrl(fakeUrl);
+        setConvertedImageUrl(fakeUrl);
+        setStatus("success");
+        setLoading(false);
+      }
+    }, 400);
   };
 
   return (
     <div className="flex w-full flex-col items-center gap-4">
       <div
         {...getRootProps()}
-        className="w-full cursor-pointer rounded-lg border-2 border-dashed p-8 text-center hover:bg-muted"
+        className={`relative w-full max-w-md cursor-pointer rounded-lg border-2 ${
+          previewUrl ? "border-none p-0" : "border-dashed p-8"
+        } bg-muted text-center transition hover:bg-muted/70`}
       >
         <input {...getInputProps()} />
-        {isDragActive ? (
-          <p>파일을 여기로 드래그하세요</p>
+        {previewUrl ? (
+          <img
+            src={previewUrl}
+            alt="업로드된 이미지"
+            className="h-auto max-h-[400px] w-full rounded object-contain"
+          />
         ) : (
-          <p>클릭하거나 드래그해서 이미지 업로드</p>
+          <div className="flex flex-col items-center justify-center text-gray-500">
+            <CloudUpload size={48} />
+            <p className="mt-2">
+              <strong>클릭</strong>하거나 <strong>드래그</strong>해서 이미지
+              업로드
+            </p>
+            <p className="mt-1 text-sm text-gray-400">(최대 10MB)</p>
+          </div>
         )}
       </div>
 
-      {previewUrl && !convertedUrl && (
+      {status === "idle" && previewUrl && !convertedUrl && (
         <>
-          {loading ? (
-            <Skeleton height={280} width={400} />
-          ) : (
-            <img
-              src={previewUrl}
-              alt="미리보기"
-              className="w-full max-w-md rounded shadow"
-            />
-          )}
+          {loading ? <Skeleton height={280} width={400} /> : null}
 
           <div className="mt-2 flex gap-2">
             {formatOptions.map((f) => (
@@ -104,6 +147,19 @@ export function UploadForm() {
       )}
 
       {convertedUrl && <ConvertedImagePreview imageUrl={convertedUrl} />}
+
+      {status !== "idle" && (
+        <>
+          <ProgressBar percent={percent} />
+          <StatusMessage status={status} />
+          <Button
+            className="mt-4 bg-gray-300 text-black hover:bg-gray-400"
+            onClick={resetForm}
+          >
+            다시 업로드하기
+          </Button>
+        </>
+      )}
     </div>
   );
 }
