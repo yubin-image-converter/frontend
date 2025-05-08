@@ -1,11 +1,9 @@
-import "react-loading-skeleton/dist/skeleton.css";
-
 import { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
-import Skeleton from "react-loading-skeleton";
 import { CloudUpload } from "lucide-react";
-
+import Skeleton from "react-loading-skeleton";
 import { Button } from "../ui/button";
+import { convertImage } from "@/lib/convertImage";
 import { ConvertedImagePreview } from "./ConvertedImagePreview";
 import { ProgressBar } from "./ProgressBar";
 import { StatusMessage } from "./StatusMessage";
@@ -14,36 +12,25 @@ const formatOptions = ["jpg", "png", "webp"] as const;
 type Format = (typeof formatOptions)[number];
 
 interface UploadFormProps {
+  percent: number;
+  status: "idle" | "converting" | "success" | "error";
   setPercent: (n: number) => void;
   setStatus: (status: "idle" | "converting" | "success" | "error") => void;
   setConvertedImageUrl: (url: string) => void;
-  percent: number;
-  status: "idle" | "converting" | "success" | "error";
 }
 
 export function UploadForm({
+  percent,
+  status,
   setPercent,
   setStatus,
   setConvertedImageUrl,
-  percent,
-  status,
 }: UploadFormProps) {
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [convertedUrl, setConvertedUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [format, setFormat] = useState<Format>("jpg");
-
-  const resetForm = () => {
-    setFile(null);
-    setPreviewUrl(null);
-    setConvertedUrl(null);
-    setFormat("jpg");
-    setLoading(false);
-    setPercent(0);
-    setStatus("idle");
-    setConvertedImageUrl("");
-  };
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const selected = acceptedFiles[0];
@@ -53,7 +40,7 @@ export function UploadForm({
     setPreviewUrl(URL.createObjectURL(selected));
   }, []);
 
-  const { getRootProps, getInputProps } = useDropzone({
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: {
       "image/jpeg": [".jpg", ".jpeg"],
@@ -70,7 +57,7 @@ export function UploadForm({
     setLoading(true);
     setStatus("converting");
     setPercent(0);
-    setConvertedImageUrl("");
+    setConvertedImageUrl(""); // 초기화
 
     let progress = 0;
     const interval = setInterval(() => {
@@ -88,11 +75,20 @@ export function UploadForm({
     }, 400);
   };
 
+  const resetForm = () => {
+    setFile(null);
+    setPreviewUrl(null);
+    setConvertedUrl(null);
+    setStatus("idle");
+    setPercent(0);
+  };
+
   return (
     <div className="flex w-full flex-col items-center gap-4 font-mono text-base text-green-300">
+      {/* 업로드 박스 */}
       <div
         {...getRootProps()}
-        className={`relative w-full max-w-md cursor-pointer rounded-lg border-2 ${
+        className={`relative w-full max-w-md cursor-pointer rounded border-2 ${
           previewUrl ? "border-none p-0" : "border-dashed border-green-500 p-8"
         } bg-black text-center transition hover:bg-[#111]`}
       >
@@ -113,18 +109,18 @@ export function UploadForm({
           <div className="flex flex-col items-center justify-center text-green-500">
             <CloudUpload size={48} />
             <p className="mt-2">
-              <strong className="text-green-300">Click</strong> or{" "}
-              <strong className="text-green-300">Drag</strong> to upload image
+              <span className="font-bold text-green-300">Click</span> or{" "}
+              <span className="font-bold text-green-300">Drag</span> to upload
+              image
             </p>
             <p className="mt-1 text-sm text-green-600">(max 10MB)</p>
           </div>
         ) : null}
       </div>
 
+      {/* 형식 선택 */}
       {status === "idle" && previewUrl && !convertedUrl && (
         <>
-          {loading ? <Skeleton height={280} width={400} /> : null}
-
           <div className="mt-2 flex gap-2">
             {formatOptions.map((f) => (
               <button
@@ -141,19 +137,28 @@ export function UploadForm({
             ))}
           </div>
 
-          <Button className="mt-2" onClick={handleConvert} disabled={loading}>
+          <Button
+            className="mt-2 bg-green-500 text-black hover:bg-green-400"
+            onClick={handleConvert}
+            disabled={loading}
+          >
             {loading ? "Converting..." : "Convert Image"}
           </Button>
         </>
       )}
 
+      {/* 변환 완료 이미지 */}
       {convertedUrl && <ConvertedImagePreview imageUrl={convertedUrl} />}
 
+      {/* 진행률 및 상태 */}
       {status !== "idle" && (
         <>
           <ProgressBar percent={percent} />
           <StatusMessage status={status} />
-          <Button className="mt-4" onClick={resetForm}>
+          <Button
+            className="mt-4 border border-green-500 bg-black text-green-300 hover:bg-green-700 hover:text-white"
+            onClick={resetForm}
+          >
             Reset Upload
           </Button>
         </>

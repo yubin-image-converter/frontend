@@ -1,9 +1,8 @@
-import { DosTabs } from "./DosTabs";
-import { ResponsiveLayout } from "./ResponsiveLayout";
+import { DosPanel } from "./DosPanel";
 import { UploadForm } from "./upload/UploadForm";
 import { WorkerPanel } from "./WorkerPanel";
 
-interface MainProps {
+interface DosTabsProps {
   percent: number;
   status: "idle" | "converting" | "success" | "error";
   setPercent: (n: number) => void;
@@ -11,24 +10,28 @@ interface MainProps {
   setConvertedImageUrl: (url: string) => void;
 }
 
-export function Main({
+export function DosTabs({
   percent,
   status,
   setPercent,
   setStatus,
   setConvertedImageUrl,
-}: MainProps) {
+}: DosTabsProps) {
   return (
-    <main className="flex flex-1 items-center justify-center p-4">
-      <div className="w-full max-w-5xl">
-        <DosTabs
+    <div className="grid items-start justify-center gap-10 md:grid-cols-2">
+      <DosPanel title="UPLOAD FORM">
+        <UploadForm
           percent={percent}
           status={status}
           setPercent={setPercent}
           setStatus={setStatus}
           setConvertedImageUrl={setConvertedImageUrl}
         />
-      </div>
-    </main>
+      </DosPanel>
+
+      <DosPanel title="WORKER STATUS">
+        <WorkerPanel />
+      </DosPanel>
+    </div>
   );
 }

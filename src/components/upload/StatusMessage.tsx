@@ -2,20 +2,27 @@ interface StatusMessageProps {
   status: "idle" | "converting" | "success" | "error";
 }
 
+import { useTypewriter } from "@/hooks/useTypewriter";
+
+interface StatusMessageProps {
+  status: "idle" | "converting" | "success" | "error";
+}
+
 export function StatusMessage({ status }: StatusMessageProps) {
-  const message = {
-    idle: "대기 중",
-    converting: "변환 중입니다...",
-    success: "변환 완료!",
-    error: "변환 실패...",
-  }[status];
+  const message =
+    status === "converting"
+      ? "Converting image. Please wait..."
+      : status === "success"
+        ? "Conversion complete! Ready to download."
+        : status === "error"
+          ? "An error occurred. Please try again."
+          : "";
 
-  const color = {
-    idle: "text-gray-500",
-    converting: "text-blue-500",
-    success: "text-green-500",
-    error: "text-red-500",
-  }[status];
+  const typed = useTypewriter(message, 35);
 
-  return <p className={`mt-2 font-semibold ${color}`}>{message}</p>;
+  return (
+    <div className="mt-2 font-mono text-sm whitespace-pre-wrap text-green-400">
+      {typed}
+    </div>
+  );
 }
