@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import axiosInstance from "@/lib/axiosInstance";
 import { getCookie } from "@/utils/getCookie";
 import { setCurrentUser } from "@/lib/userStore";
-import { Button } from "@/components/ui/button";
 import { AuthModal } from "./AuthModal";
 
 interface GoogleUser {
@@ -48,9 +47,9 @@ export function AuthButton() {
     <>
       <button
         onClick={() => setOpen(true)}
-        className="text-sm text-muted-foreground transition hover:text-white"
+        className="font-mono text-sm text-green-600 transition hover:text-green-300"
       >
-        {user ? "내 정보" : "Sign in"}
+        ▸ {user ? "User" : "Sign in"}
       </button>
       <AuthModal
         open={open}

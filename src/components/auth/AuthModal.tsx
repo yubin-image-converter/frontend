@@ -1,11 +1,14 @@
+import { LogIn, LogOut, UserCircle, X } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { UserCircle, LogOut, LogIn } from "lucide-react";
+import { makeAsciiTitleBox } from "@/lib/utils/ makeAsciiTitleBox";
 
 interface AuthModalProps {
   open: boolean;
@@ -23,44 +26,50 @@ export function AuthModal({ open, onClose, user, onLogout }: AuthModalProps) {
       import.meta.env.VITE_AUTHENTICATION_SERVER_URL +
       "/auth/signin?provider=google";
   };
-
+  const { top, bottom } = makeAsciiTitleBox("MY ACCOUNT", 50);
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="border border-gray-700 bg-[#1a1a1a] text-white">
-        <DialogHeader>
-          <DialogTitle className="text-lg">내 계정</DialogTitle>
-        </DialogHeader>
+      <DialogContent
+        className="rounded-none border border-green-600 bg-black p-0 font-mono text-green-300 shadow-none"
+        style={{ overflow: "visible" }}
+      >
+        <pre className="pt-4 text-center font-mono text-sm leading-none text-green-300">
+          {top}
+        </pre>
 
-        <div className="flex flex-col items-center gap-4 pt-2">
+        <div className="flex flex-col items-center gap-4 px-6 pt-6 pb-4 text-sm">
           {user ? (
             <>
-              <UserCircle className="h-12 w-12 text-muted-foreground" />
-              <p className="text-sm font-medium">{user.name}</p>
-              <p className="text-xs text-muted-foreground">{user.email}</p>
+              <UserCircle className="h-10 w-10 text-green-700" />
+              <div className="text-green-300">{user.name}</div>
+              <div className="text-green-600">{user.email}</div>
               <Button
-                variant="destructive"
                 onClick={onLogout}
-                className="flex items-center gap-2"
+                className="border border-green-700 bg-black px-4 py-1 font-mono text-green-300 hover:bg-green-700 hover:text-black"
               >
-                <LogOut size={16} />
+                <LogOut size={14} className="mr-1" />
                 로그아웃
               </Button>
             </>
           ) : (
             <>
-              <p className="text-sm text-muted-foreground">
+              <div className="text-green-600">
                 Google 계정으로 로그인하세요.
-              </p>
+              </div>
               <Button
                 onClick={handleLogin}
-                className="flex gap-2 bg-green-500 hover:bg-green-600"
+                className="border border-green-700 bg-black px-4 py-1 font-mono text-green-300 hover:bg-green-700 hover:text-black"
               >
-                <LogIn size={16} />
+                <LogIn size={14} className="mr-1" />
                 Google 로그인
               </Button>
             </>
           )}
         </div>
+
+        <pre className="pb-4 text-center font-mono text-sm leading-none text-green-600">
+          {bottom}
+        </pre>
       </DialogContent>
     </Dialog>
   );
