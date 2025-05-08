@@ -3,7 +3,7 @@ import axiosInstance from "@/lib/axiosInstance";
 export async function convertImage(
   file: File,
   format: string,
-): Promise<string> {
+): Promise<{ requestId: string; userId: string }> {
   const formData = new FormData();
   formData.append("file", file);
   formData.append("format", format);
@@ -12,8 +12,11 @@ export async function convertImage(
     headers: {
       "Content-Type": "multipart/form-data",
     },
-    withCredentials: true, // 쿠키 사용
+    withCredentials: true,
   });
 
-  return response.data.imageUrl;
+  return {
+    requestId: response.data.requestId,
+    userId: response.data.userId,
+  };
 }

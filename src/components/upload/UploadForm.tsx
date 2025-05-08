@@ -7,6 +7,7 @@ import { convertImage } from "@/lib/convertImage";
 import { ConvertedImagePreview } from "./ConvertedImagePreview";
 import { ProgressBar } from "./ProgressBar";
 import { StatusMessage } from "./StatusMessage";
+import { useAsciiSocket } from "@/hooks/useAsciiSocket";
 
 const formatOptions = ["jpg", "png", "webp"] as const;
 type Format = (typeof formatOptions)[number];
@@ -57,23 +58,28 @@ export function UploadForm({
     setLoading(true);
     setStatus("converting");
     setPercent(0);
-    setConvertedImageUrl(""); // 초기화
+    setConvertedImageUrl("");
 
-    let progress = 0;
-    const interval = setInterval(() => {
-      progress += 20;
-      setPercent(progress);
-
-      if (progress >= 100) {
-        clearInterval(interval);
-        const fakeUrl = "https://picsum.photos/200";
-        setConvertedUrl(fakeUrl);
-        setConvertedImageUrl(fakeUrl);
-        setStatus("success");
-        setLoading(false);
-      }
-    }, 400);
+    try {
+      const { requestId } = await convertImage(file, format);
+      setRequestId(requestId); // 이걸 기준으로 WebSocket 기다림
+    } catch (err) {
+      setStatus("error");
+      console.error(err);
+    }
   };
+
+  const [requestId, setRequestId] = useState<string | null>(null);
+
+  useAsciiSocket({
+    requestId: requestId ?? "",
+    onComplete: (url) => {
+      setConvertedUrl(url);
+      setConvertedImageUrl(url);
+      setStatus("success");
+      setLoading(false);
+    },
+  });
 
   const resetForm = () => {
     setFile(null);
