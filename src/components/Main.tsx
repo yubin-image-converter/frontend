@@ -21,18 +21,19 @@ export function Main({
   return (
     <main className="flex flex-1 items-center justify-center p-4">
       <ResponsiveLayout
-        left={<AuthButton />}
+        left={
+          <div className="flex-1">
+            <UploadForm
+              percent={percent}
+              status={status}
+              setPercent={setPercent}
+              setStatus={setStatus}
+              setConvertedImageUrl={setConvertedImageUrl}
+            />
+          </div>
+        }
         right={
           <div className="flex w-full flex-col gap-6 md:flex-row">
-            <div className="flex-1">
-              <UploadForm
-                percent={percent}
-                status={status}
-                setPercent={setPercent}
-                setStatus={setStatus}
-                setConvertedImageUrl={setConvertedImageUrl}
-              />
-            </div>
             <WorkerPanel />
           </div>
         }

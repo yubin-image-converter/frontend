@@ -1,10 +1,9 @@
-import { UserCircle } from "lucide-react";
 import { useEffect, useState } from "react";
-
-import { Button } from "@/components/ui/button";
 import axiosInstance from "@/lib/axiosInstance";
-import { setCurrentUser } from "@/lib/userStore";
 import { getCookie } from "@/utils/getCookie";
+import { setCurrentUser } from "@/lib/userStore";
+import { Button } from "@/components/ui/button";
+import { AuthModal } from "./AuthModal";
 
 interface GoogleUser {
   name: string;
@@ -15,17 +14,13 @@ interface GoogleUser {
 
 export function AuthButton() {
   const [user, setUser] = useState<GoogleUser | null>(null);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const accessToken = urlParams.get("accessToken");
-
-    // AuthButton.tsx - useEffect 안
     if (accessToken) {
-      // 쿠키에 저장 (1시간 유효)
       document.cookie = `accessToken=${accessToken}; path=/; max-age=3600`;
-
-      // URL 정리
       const cleanUrl = window.location.origin + window.location.pathname;
       window.history.replaceState({}, document.title, cleanUrl);
     }
@@ -36,61 +31,33 @@ export function AuthButton() {
     if (!token) return;
 
     axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-
-    const fetchUser = async () => {
-      try {
-        const res = await axiosInstance.get("/users/me");
-        setUser(res.data);
-        setCurrentUser(res.data);
-        // console.log(res.data);
-      } catch (err) {
-        console.error("유저 정보 불러오기 실패", err);
-        localStorage.removeItem("accessToken");
-      }
-    };
-
-    fetchUser();
+    axiosInstance.get("/users/me").then((res) => {
+      setUser(res.data);
+      setCurrentUser(res.data);
+    });
   }, []);
 
-  const handleLogin = () => {
-    window.location.href =
-      import.meta.env.VITE_AUTHENTICATION_SERVER_URL +
-      "/auth/signin?provider=google";
-  };
-
-  const handleLogout = async () => {
-    // 쿠키 제거 (expires로 무효화)
+  const handleLogout = () => {
     document.cookie = "accessToken=; path=/; max-age=0";
-
     delete axiosInstance.defaults.headers.common["Authorization"];
     setUser(null);
+    setOpen(false);
   };
 
-  if (user) {
-    return (
-      <div className="flex flex-col items-center gap-4">
-        <UserCircle className="h-16 w-16 text-muted-foreground" />
-        <p className="text-center text-sm font-medium">{user.name}</p>
-        <p className="text-center text-xs text-muted-foreground">
-          {user.email}
-        </p>
-        <Button
-          className="rounded bg-red-500 px-4 py-2 text-white hover:bg-red-600"
-          onClick={handleLogout}
-        >
-          로그아웃
-        </Button>
-      </div>
-    );
-  }
-
   return (
-    <Button
-      onClick={handleLogin}
-      className="flex items-center gap-2 bg-green-500 hover:bg-green-600"
-    >
-      <UserCircle className="h-5 w-5" />
-      Google 로그인
-    </Button>
+    <>
+      <button
+        onClick={() => setOpen(true)}
+        className="text-sm text-muted-foreground transition hover:text-white"
+      >
+        {user ? "내 정보" : "Sign in"}
+      </button>
+      <AuthModal
+        open={open}
+        onClose={() => setOpen(false)}
+        user={user}
+        onLogout={handleLogout}
+      />
+    </>
   );
 }
