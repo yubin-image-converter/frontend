@@ -18,20 +18,24 @@ export function DosTabs({
   setConvertedImageUrl,
 }: DosTabsProps) {
   return (
-    <div className="grid items-start justify-center gap-10 md:grid-cols-2">
-      <DosPanel title="UPLOAD FORM">
-        <UploadForm
-          percent={percent}
-          status={status}
-          setPercent={setPercent}
-          setStatus={setStatus}
-          setConvertedImageUrl={setConvertedImageUrl}
-        />
-      </DosPanel>
+    <div className="flex flex-col gap-6 md:flex-row md:items-stretch">
+      <div className="flex-[3]">
+        <DosPanel title="UPLOAD FORM" className="min-h-[400px]">
+          <UploadForm
+            percent={percent}
+            status={status}
+            setPercent={setPercent}
+            setStatus={setStatus}
+            setConvertedImageUrl={setConvertedImageUrl}
+          />
+        </DosPanel>
+      </div>
 
-      <DosPanel title="WORKER STATUS">
-        <WorkerPanel />
-      </DosPanel>
+      <div className="flex-[2]">
+        <DosPanel title="WORKER STATUS" className="min-h-[400px]">
+          <WorkerPanel />
+        </DosPanel>
+      </div>
     </div>
   );
 }

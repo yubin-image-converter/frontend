@@ -1,13 +1,15 @@
-import { useState, useEffect } from "react";
 import "./App.css";
+
+import { useEffect, useState } from "react";
+
 import { Footer } from "./components/Footer";
 import { Header } from "./components/Header";
 import { Main } from "./components/Main";
 import { useSocket } from "./hooks/useSocket";
 import axiosInstance from "./lib/axiosInstance";
 import { setCurrentUser } from "./lib/userStore";
+import { getCookie } from "./lib/utils/getCookie";
 import { GoogleUser } from "./types/User";
-import { getCookie } from "./utils/getCookie";
 
 function App() {
   const [user, setUser] = useState<GoogleUser | null>(null);
@@ -41,7 +43,7 @@ function App() {
   useSocket({ setPercent, setStatus, setConvertedImageUrl });
 
   return (
-    <div className="flex min-h-screen flex-col bg-[#0f0f0f] font-mono text-gray-100">
+    <div className="flex min-h-screen flex-col bg-black font-mono text-gray-100">
       <Header />
       <Main
         percent={percent}
