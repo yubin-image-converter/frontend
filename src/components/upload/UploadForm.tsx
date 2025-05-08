@@ -90,12 +90,12 @@ export function UploadForm({
   };
 
   return (
-    <div className="flex w-full flex-col items-center gap-4">
+    <div className="flex w-full flex-col items-center gap-4 font-mono text-base text-green-300">
       <div
         {...getRootProps()}
         className={`relative w-full max-w-md cursor-pointer rounded-lg border-2 ${
-          previewUrl ? "border-none p-0" : "border-dashed p-8"
-        } bg-muted text-center transition hover:bg-muted/70`}
+          previewUrl ? "border-none p-0" : "border-dashed border-green-500 p-8"
+        } bg-black text-center transition hover:bg-[#111]`}
       >
         <input {...getInputProps()} />
         {previewUrl ? (
@@ -105,13 +105,13 @@ export function UploadForm({
             className="h-auto max-h-[400px] w-full rounded object-contain"
           />
         ) : (
-          <div className="flex flex-col items-center justify-center text-gray-500">
+          <div className="flex flex-col items-center justify-center text-green-500">
             <CloudUpload size={48} />
             <p className="mt-2">
-              <strong>클릭</strong>하거나 <strong>드래그</strong>해서 이미지
-              업로드
+              <strong className="text-green-300">Click</strong> or{" "}
+              <strong className="text-green-300">Drag</strong> to upload image
             </p>
-            <p className="mt-1 text-sm text-gray-400">(최대 10MB)</p>
+            <p className="mt-1 text-sm text-green-600">(max 10MB)</p>
           </div>
         )}
       </div>
@@ -124,10 +124,10 @@ export function UploadForm({
             {formatOptions.map((f) => (
               <button
                 key={f}
-                className={`rounded border px-3 py-1 text-sm capitalize ${
+                className={`rounded border border-green-500 px-3 py-1 text-sm capitalize ${
                   format === f
-                    ? "bg-primary text-white"
-                    : "bg-muted text-foreground"
+                    ? "bg-green-600 text-black"
+                    : "bg-black text-green-300 hover:bg-green-800 hover:text-white"
                 }`}
                 onClick={() => setFormat(f)}
               >
@@ -136,12 +136,8 @@ export function UploadForm({
             ))}
           </div>
 
-          <Button
-            className="mt-2 rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
-            onClick={handleConvert}
-            disabled={loading}
-          >
-            {loading ? "변환 중..." : "변환 요청"}
+          <Button className="mt-2" onClick={handleConvert} disabled={loading}>
+            {loading ? "Converting..." : "Convert Image"}
           </Button>
         </>
       )}
@@ -152,11 +148,8 @@ export function UploadForm({
         <>
           <ProgressBar percent={percent} />
           <StatusMessage status={status} />
-          <Button
-            className="mt-4 bg-gray-300 text-black hover:bg-gray-400"
-            onClick={resetForm}
-          >
-            다시 업로드하기
+          <Button className="mt-4" onClick={resetForm}>
+            Reset Upload
           </Button>
         </>
       )}
