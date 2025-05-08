@@ -1,18 +1,14 @@
+import { useState, useEffect } from "react";
 import "./App.css";
-
-import { useEffect, useState } from "react";
-
-import { AuthButton } from "./components/auth/AuthButton";
-import { ProgressBar } from "./components/progress/ProgressBar";
-import { ResponsiveLayout } from "./components/ResponsiveLayout";
-import { StatusMessage } from "./components/StatusMessage";
-import { UploadForm } from "./components/upload/UploadForm";
+import { Footer } from "./components/Footer";
+import { Header } from "./components/Header";
+import { Main } from "./components/Main";
 import { useSocket } from "./hooks/useSocket";
 import axiosInstance from "./lib/axiosInstance";
 import { setCurrentUser } from "./lib/userStore";
 import { GoogleUser } from "./types/User";
 import { getCookie } from "./utils/getCookie";
-import { WorkerPanel } from "./components/WorkerPanel";
+
 function App() {
   const [user, setUser] = useState<GoogleUser | null>(null);
   const [percent, setPercent] = useState(0);
@@ -43,25 +39,18 @@ function App() {
   }, []);
 
   useSocket({ setPercent, setStatus, setConvertedImageUrl });
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background p-4 text-foreground">
-      <ResponsiveLayout
-        left={<AuthButton />}
-        right={
-          <div className="flex w-full flex-col gap-6 md:flex-row">
-            <div className="flex-1">
-              <UploadForm
-                setPercent={setPercent}
-                setStatus={setStatus}
-                setConvertedImageUrl={setConvertedImageUrl}
-                percent={percent}
-                status={status}
-              />
-            </div>
-            <WorkerPanel />
-          </div>
-        }
+    <div className="flex min-h-screen flex-col bg-[#0f0f0f] font-mono text-gray-100">
+      <Header />
+      <Main
+        percent={percent}
+        status={status}
+        setPercent={setPercent}
+        setStatus={setStatus}
+        setConvertedImageUrl={setConvertedImageUrl}
       />
+      <Footer />
     </div>
   );
 }
