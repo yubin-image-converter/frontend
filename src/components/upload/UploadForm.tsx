@@ -3,7 +3,7 @@ import "react-loading-skeleton/dist/skeleton.css";
 import { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import Skeleton from "react-loading-skeleton";
-import { CloudUpload } from "lucide-react"; // 아이콘
+import { CloudUpload } from "lucide-react";
 
 import { Button } from "../ui/button";
 import { ConvertedImagePreview } from "./ConvertedImagePreview";
@@ -53,7 +53,7 @@ export function UploadForm({
     setPreviewUrl(URL.createObjectURL(selected));
   }, []);
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+  const { getRootProps, getInputProps } = useDropzone({
     onDrop,
     accept: {
       "image/jpeg": [".jpg", ".jpeg"],
@@ -79,7 +79,6 @@ export function UploadForm({
 
       if (progress >= 100) {
         clearInterval(interval);
-
         const fakeUrl = "https://placekitten.com/400/300";
         setConvertedUrl(fakeUrl);
         setConvertedImageUrl(fakeUrl);
@@ -98,13 +97,19 @@ export function UploadForm({
         } bg-black text-center transition hover:bg-[#111]`}
       >
         <input {...getInputProps()} />
-        {previewUrl ? (
-          <img
-            src={previewUrl}
-            alt="업로드된 이미지"
-            className="h-auto max-h-[400px] w-full rounded object-contain"
-          />
-        ) : (
+        {previewUrl && !convertedUrl ? (
+          <div className="relative w-full max-w-md">
+            {loading ? (
+              <Skeleton height={300} width="100%" />
+            ) : (
+              <img
+                src={previewUrl}
+                alt="업로드된 이미지"
+                className="h-auto max-h-[400px] w-full rounded object-contain"
+              />
+            )}
+          </div>
+        ) : !previewUrl ? (
           <div className="flex flex-col items-center justify-center text-green-500">
             <CloudUpload size={48} />
             <p className="mt-2">
@@ -113,7 +118,7 @@ export function UploadForm({
             </p>
             <p className="mt-1 text-sm text-green-600">(max 10MB)</p>
           </div>
-        )}
+        ) : null}
       </div>
 
       {status === "idle" && previewUrl && !convertedUrl && (
