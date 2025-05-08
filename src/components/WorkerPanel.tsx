@@ -1,3 +1,4 @@
+import { useTypewriterLoop } from "@/hooks/useTypewriterLoop";
 import { useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
 
@@ -8,6 +9,11 @@ interface Worker {
 
 export function WorkerPanel() {
   const [workers, setWorkers] = useState<Worker[]>([]);
+  const message = useTypewriterLoop(
+    "Waiting for worker connection...",
+    80,
+    2000,
+  );
 
   useEffect(() => {
     const socket: Socket = io(import.meta.env.VITE_SOCKET_SERVER_URL);
@@ -32,15 +38,12 @@ export function WorkerPanel() {
   }, []);
 
   return (
-    <div className="w-full rounded-lg border border-green-500 bg-black p-6 font-mono text-base text-green-300 shadow-xl md:w-1/2">
+    <div className="w-full rounded border border-green-500 bg-black p-8 font-mono text-base text-green-300">
       <h3 className="mb-4 text-lg font-bold tracking-wider text-green-400 uppercase">
         [ Worker Status Panel ]
       </h3>
-
       {workers.length === 0 ? (
-        <p className="text-green-600 italic">
-          Waiting for worker connection...
-        </p>
+        <p className="text-green-600 italic">{message}</p>
       ) : (
         <div className="max-h-60 overflow-y-auto pr-2">
           {workers.map((worker) => (

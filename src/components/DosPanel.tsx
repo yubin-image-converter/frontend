@@ -4,13 +4,19 @@ interface DosPanelProps {
   className?: string;
 }
 
-export function DosPanel({ title, children, className }: DosPanelProps) {
-  const width = 40;
-  const bar = "═".repeat(width);
-  const paddedTitle = `[ ${title} ]`
-    .padStart(Math.floor((width + title.length) / 2), " ")
-    .padEnd(width, " ");
+export function DosPanel({
+  title,
+  children,
+  className,
+  minWidth = 20,
+}: DosPanelProps) {
+  const content = `[ ${title} ]`;
+  const totalWidth = Math.max(minWidth, content.length + 4); // 좌우 공백 포함
 
+  const bar = "═".repeat(totalWidth);
+  const paddedTitle = content
+    .padStart(Math.floor((totalWidth + content.length) / 2), " ")
+    .padEnd(totalWidth, " ");
   return (
     <div
       className={`w-full bg-black font-mono text-sm leading-none text-green-400 ${className}`}

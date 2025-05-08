@@ -66,7 +66,7 @@ export function UploadForm({
 
       if (progress >= 100) {
         clearInterval(interval);
-        const fakeUrl = "https://placekitten.com/400/300";
+        const fakeUrl = "https://picsum.photos/200";
         setConvertedUrl(fakeUrl);
         setConvertedImageUrl(fakeUrl);
         setStatus("success");
@@ -156,7 +156,7 @@ export function UploadForm({
           <ProgressBar percent={percent} />
           <StatusMessage status={status} />
           <Button
-            className="mt-4 border border-green-500 bg-black text-green-300 hover:bg-green-700 hover:text-white"
+            className="flex items-center gap-2 rounded border border-green-600 bg-black px-4 py-2 font-mono text-green-300 hover:bg-green-700 hover:text-white"
             onClick={resetForm}
           >
             Reset Upload

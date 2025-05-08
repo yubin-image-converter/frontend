@@ -1,5 +1,7 @@
 // src/components/ConvertedImagePreview.tsx
 
+import { Download } from "lucide-react";
+
 interface Props {
   imageUrl: string;
 }
@@ -8,22 +10,26 @@ export function ConvertedImagePreview({ imageUrl }: Props) {
   const handleDownload = () => {
     const link = document.createElement("a");
     link.href = imageUrl;
-    link.download = "converted-image.png"; // 혹은 동적으로 확장자 지정
+    link.download = "converted-image.png";
     link.click();
   };
 
   return (
-    <div className="flex flex-col items-center gap-4">
-      <img
-        src={imageUrl}
-        alt="변환된 이미지"
-        className="w-full max-w-md rounded shadow"
-      />
+    <div className="flex flex-col items-center gap-4 font-mono text-green-300">
+      <div className="max-w-md border border-green-700 p-2">
+        <img
+          src={imageUrl}
+          alt="Converted image"
+          className="max-h-[300px] w-full bg-black object-contain"
+        />
+      </div>
+
       <button
-        className="bg-green-600 hover:bg-green-700 rounded px-4 py-2 text-white"
         onClick={handleDownload}
+        className="flex items-center gap-2 rounded border border-green-600 bg-black px-4 py-2 font-mono text-green-300 hover:bg-green-700 hover:text-white"
       >
-        다운로드
+        <Download size={14} />
+        Download
       </button>
     </div>
   );
