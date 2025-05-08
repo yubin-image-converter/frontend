@@ -12,6 +12,7 @@ import axiosInstance from "./lib/axiosInstance";
 import { setCurrentUser } from "./lib/userStore";
 import { GoogleUser } from "./types/User";
 import { getCookie } from "./utils/getCookie";
+import { WorkerPanel } from "./components/WorkerPanel";
 function App() {
   const [user, setUser] = useState<GoogleUser | null>(null);
   const [percent, setPercent] = useState(0);
@@ -47,13 +48,18 @@ function App() {
       <ResponsiveLayout
         left={<AuthButton />}
         right={
-          <UploadForm
-            setPercent={setPercent}
-            setStatus={setStatus}
-            setConvertedImageUrl={setConvertedImageUrl}
-            percent={percent}
-            status={status}
-          />
+          <div className="flex w-full flex-col gap-6 md:flex-row">
+            <div className="flex-1">
+              <UploadForm
+                setPercent={setPercent}
+                setStatus={setStatus}
+                setConvertedImageUrl={setConvertedImageUrl}
+                percent={percent}
+                status={status}
+              />
+            </div>
+            <WorkerPanel />
+          </div>
         }
       />
     </div>
