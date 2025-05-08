@@ -1,23 +1,5 @@
 import { ReactNode } from "react";
 
-// interface ResponsiveLayoutProps {
-//   left: ReactNode;
-//   right: ReactNode;
-// }
-
-// export function ResponsiveLayout({ left, right }: ResponsiveLayoutProps) {
-//   return (
-//     <div className="flex w-full max-w-5xl flex-col items-stretch gap-8 md:flex-row">
-//       <section className="flex w-full flex-col items-center gap-4 rounded-lg border p-4 shadow-sm md:w-1/3">
-//         {left}
-//       </section>
-//       <section className="w-full rounded-lg border bg-muted p-6 md:w-2/3">
-//         {right}
-//       </section>
-//     </div>
-//   );
-// }
-
 interface ResponsiveLayoutProps {
   left: React.ReactNode;
   right: React.ReactNode;
@@ -25,9 +7,9 @@ interface ResponsiveLayoutProps {
 
 export function ResponsiveLayout({ left, right }: ResponsiveLayoutProps) {
   return (
-    <div className="flex w-full max-w-5xl flex-col gap-6 md:flex-row">
-      <div className="w-full md:w-1/3">{left}</div>
-      <div className="w-full md:w-2/3">{right}</div>
+    <div className="mx-auto flex w-full max-w-5xl flex-col gap-6 md:flex-row">
+      <div className="w-full md:w-2/5">{left}</div>
+      <div className="w-full md:w-3/5">{right}</div>
     </div>
   );
 }

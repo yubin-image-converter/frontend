@@ -1,4 +1,3 @@
-import { AuthButton } from "./auth/AuthButton";
 import { ResponsiveLayout } from "./ResponsiveLayout";
 import { UploadForm } from "./upload/UploadForm";
 import { WorkerPanel } from "./WorkerPanel";
@@ -20,9 +19,9 @@ export function Main({
 }: MainProps) {
   return (
     <main className="flex flex-1 items-center justify-center p-4">
-      <ResponsiveLayout
-        left={
-          <div className="flex-1">
+      <div className="w-full max-w-5xl">
+        <ResponsiveLayout
+          left={
             <UploadForm
               percent={percent}
               status={status}
@@ -30,14 +29,10 @@ export function Main({
               setStatus={setStatus}
               setConvertedImageUrl={setConvertedImageUrl}
             />
-          </div>
-        }
-        right={
-          <div className="flex w-full flex-col gap-6 md:flex-row">
-            <WorkerPanel />
-          </div>
-        }
-      />
+          }
+          right={<WorkerPanel />}
+        />
+      </div>
     </main>
   );
 }

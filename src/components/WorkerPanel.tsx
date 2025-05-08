@@ -32,27 +32,37 @@ export function WorkerPanel() {
   }, []);
 
   return (
-    <div className="w-full rounded-lg border border-gray-700 bg-[#1a1a1a] p-4 font-mono text-sm text-gray-300 shadow md:w-1/4">
-      <h3 className="mb-2 text-gray-400">[ 워커 상태 패널 ]</h3>
+    <div className="w-full rounded-lg border border-green-500 bg-black p-6 font-mono text-base text-green-300 shadow-xl md:w-1/2">
+      <h3 className="mb-4 text-lg font-bold tracking-wider text-green-400 uppercase">
+        [ Worker Status Panel ]
+      </h3>
+
       {workers.length === 0 ? (
-        <p className="text-gray-500">워커 연결 대기 중...</p>
+        <p className="text-green-600 italic">
+          Waiting for worker connection...
+        </p>
       ) : (
-        workers.map((worker) => (
-          <p key={worker.id} className="mb-1">
-            {worker.id.padEnd(10)}{" "}
-            <span
-              className={`${
-                worker.status === "idle"
-                  ? "text-green-400"
-                  : worker.status === "converting"
-                    ? "text-blue-400"
-                    : "text-red-400"
-              }`}
+        <div className="max-h-60 overflow-y-auto pr-2">
+          {workers.map((worker) => (
+            <div
+              key={worker.id}
+              className="mb-2 flex justify-between border-b border-green-700 pb-1 whitespace-nowrap"
             >
-              {worker.status}
-            </span>
-          </p>
-        ))
+              <span className="w-44 truncate">{worker.id}</span>
+              <span
+                className={`font-bold ${
+                  worker.status === "idle"
+                    ? "text-green-400"
+                    : worker.status === "converting"
+                      ? "text-yellow-300"
+                      : "text-red-400"
+                }`}
+              >
+                {worker.status.toUpperCase()}
+              </span>
+            </div>
+          ))}
+        </div>
       )}
     </div>
   );
