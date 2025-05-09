@@ -9,7 +9,7 @@ export function useAsciiSocket({ requestId, onComplete }: UseAsciiSocketProps) {
   useEffect(() => {
     if (!requestId) return;
 
-    const socket = new WebSocket("ws://localhost:3001/ascii");
+    const socket = new WebSocket("ws://localhost:4000/ascii");
 
     socket.onmessage = (event) => {
       try {

@@ -9,6 +9,7 @@ interface MainProps {
   setPercent: (n: number) => void;
   setStatus: (status: "idle" | "converting" | "success" | "error") => void;
   setConvertedImageUrl: (url: string) => void;
+  txtUrl: string | null;
 }
 
 export function Main({
@@ -17,6 +18,7 @@ export function Main({
   setPercent,
   setStatus,
   setConvertedImageUrl,
+  txtUrl,
 }: MainProps) {
   return (
     <main className="flex flex-1 items-center justify-center p-4">
@@ -27,6 +29,7 @@ export function Main({
           setPercent={setPercent}
           setStatus={setStatus}
           setConvertedImageUrl={setConvertedImageUrl}
+          txtUrl={txtUrl}
         />
       </div>
     </main>

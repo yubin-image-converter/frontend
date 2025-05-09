@@ -20,6 +20,7 @@ function App() {
   const [convertedImageUrl, setConvertedImageUrl] = useState<string | null>(
     null,
   );
+  const [txtUrl, setTxtUrl] = useState<string | null>(null);
 
   useEffect(() => {
     const token = getCookie("accessToken");
@@ -40,8 +41,14 @@ function App() {
     fetchUser();
   }, []);
 
-  useSocket({ setPercent, setStatus, setConvertedImageUrl });
-
+  // useSocket({ setPercent, setStatus, setConvertedImageUrl });
+  useSocket({
+    userId: user?.publicId,
+    onAsciiComplete: (msg) => {
+      console.log("✅ ASCII complete:", msg);
+      setTxtUrl(msg.txtUrl);
+    },
+  });
   return (
     <div className="flex min-h-screen flex-col bg-black font-mono text-gray-100">
       <Header />
@@ -51,6 +58,7 @@ function App() {
         setPercent={setPercent}
         setStatus={setStatus}
         setConvertedImageUrl={setConvertedImageUrl}
+        txtUrl={txtUrl}
       />
       <Footer />
     </div>

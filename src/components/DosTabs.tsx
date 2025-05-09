@@ -8,6 +8,7 @@ interface DosTabsProps {
   setPercent: (n: number) => void;
   setStatus: (status: "idle" | "converting" | "success" | "error") => void;
   setConvertedImageUrl: (url: string) => void;
+  txturl: string | null;
 }
 
 export function DosTabs({
@@ -16,6 +17,7 @@ export function DosTabs({
   setPercent,
   setStatus,
   setConvertedImageUrl,
+  txturl,
 }: DosTabsProps) {
   return (
     <div className="flex flex-col gap-6 md:flex-row md:items-stretch">
@@ -27,6 +29,7 @@ export function DosTabs({
             setPercent={setPercent}
             setStatus={setStatus}
             setConvertedImageUrl={setConvertedImageUrl}
+            txturl={txturl}
           />
         </DosPanel>
       </div>

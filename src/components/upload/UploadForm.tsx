@@ -1,13 +1,16 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
-import { CloudUpload } from "lucide-react";
 import Skeleton from "react-loading-skeleton";
+import { CloudUpload } from "lucide-react";
+
 import { Button } from "../ui/button";
-import { convertImage } from "@/lib/convertImage";
-import { ConvertedImagePreview } from "./ConvertedImagePreview";
 import { ProgressBar } from "./ProgressBar";
 import { StatusMessage } from "./StatusMessage";
+import { ConvertedImagePreview } from "./ConvertedImagePreview";
+
 import { useAsciiSocket } from "@/hooks/useAsciiSocket";
+import { convertImage } from "@/lib/convertImage";
+import { fetchAsciiResult } from "@/lib/api/convert";
 
 const formatOptions = ["jpg", "png", "webp"] as const;
 type Format = (typeof formatOptions)[number];
@@ -18,6 +21,7 @@ interface UploadFormProps {
   setPercent: (n: number) => void;
   setStatus: (status: "idle" | "converting" | "success" | "error") => void;
   setConvertedImageUrl: (url: string) => void;
+  txtUrl: string | null;
 }
 
 export function UploadForm({
@@ -26,13 +30,28 @@ export function UploadForm({
   setPercent,
   setStatus,
   setConvertedImageUrl,
+  txtUrl,
 }: UploadFormProps) {
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [convertedUrl, setConvertedUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [format, setFormat] = useState<Format>("jpg");
+  const [requestId, setRequestId] = useState<string>(""); // 초기값 빈 문자열
 
+  // ASCII 변환 완료 이벤트 수신
+  useAsciiSocket({
+    requestId,
+    onComplete: (txtUrl) => {
+      setConvertedUrl(txtUrl);
+      setConvertedImageUrl(txtUrl);
+      setStatus("success");
+      setLoading(false);
+      console.log("✅ ASCII 변환 완료! URL:", txtUrl);
+    },
+  });
+
+  // 이미지 드롭 이벤트
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const selected = acceptedFiles[0];
     if (!selected) return;
@@ -41,7 +60,7 @@ export function UploadForm({
     setPreviewUrl(URL.createObjectURL(selected));
   }, []);
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+  const { getRootProps, getInputProps } = useDropzone({
     onDrop,
     accept: {
       "image/jpeg": [".jpg", ".jpeg"],
@@ -52,6 +71,7 @@ export function UploadForm({
     multiple: false,
   });
 
+  // 변환 요청 핸들러
   const handleConvert = async () => {
     if (!file) return;
 
@@ -62,29 +82,26 @@ export function UploadForm({
 
     try {
       const { requestId } = await convertImage(file, format);
-      setRequestId(requestId); // 이걸 기준으로 WebSocket 기다림
+      setRequestId(requestId); // WebSocket 응답 대기
     } catch (err) {
       setStatus("error");
       console.error(err);
     }
   };
 
-  const [requestId, setRequestId] = useState<string | null>(null);
+  useEffect(() => {
+    if (!requestId) return;
 
-  useAsciiSocket({
-    requestId: requestId ?? "",
-    onComplete: (url) => {
-      setConvertedUrl(url);
-      setConvertedImageUrl(url);
-      setStatus("success");
-      setLoading(false);
-    },
-  });
+    fetchAsciiResult(requestId).then((url) => {
+      if (url) setTxtUrl(url);
+    });
+  }, [requestId]);
 
   const resetForm = () => {
     setFile(null);
     setPreviewUrl(null);
     setConvertedUrl(null);
+    setRequestId("");
     setStatus("idle");
     setPercent(0);
   };
@@ -153,10 +170,10 @@ export function UploadForm({
         </>
       )}
 
-      {/* 변환 완료 이미지 */}
-      {convertedUrl && <ConvertedImagePreview imageUrl={convertedUrl} />}
+      {/* ASCII 변환 결과 */}
+      {convertedUrl && <ConvertedImagePreview txtUrl={txtUrl} />}
 
-      {/* 진행률 및 상태 */}
+      {/* 진행률 / 상태 메시지 */}
       {status !== "idle" && (
         <>
           <ProgressBar percent={percent} />
