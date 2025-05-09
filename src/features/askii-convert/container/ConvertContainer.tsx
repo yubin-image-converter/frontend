@@ -51,7 +51,7 @@ export function ConvertContainer() {
     <div className="flex flex-col gap-6 px-4 transition-all duration-300">
       {/* 업로드 & 결과 패널 */}
       <div
-        className={`mx-auto flex max-w-6xl flex-col items-center gap-6 transition-all duration-500 md:flex-row ${
+        className={`mx-auto flex max-w-none flex-col items-center gap-6 transition-all duration-500 md:flex-row ${
           txtUrl ? "md:items-start md:justify-between" : "md:justify-center"
         }`}
       >
@@ -60,7 +60,7 @@ export function ConvertContainer() {
           onRequestLogin={() => setAuthOpen(true)}
         />
         {txtUrl && (
-          <div className="w-full md:w-[640px]">
+          <div className="w-full min-w-0 max-w-[768px] flex-1">
             <ConvertedImagePreview txtUrl={txtUrl} />
           </div>
         )}
