@@ -5,6 +5,7 @@ import axiosInstance from "@/shared/lib/axiosInstance";
 import { getCookie } from "@/utils/getCookie";
 
 import { AuthModal } from "./AuthModal";
+import { logoutUser } from "@/shared/lib/logoutUser";
 
 interface GoogleUser {
   name: string;
@@ -38,26 +39,7 @@ export function AuthButton() {
     });
   }, []);
 
-  // const handleLogout = () => {
-  //   document.cookie = "accessToken=; path=/; max-age=0";
-  //   delete axiosInstance.defaults.headers.common["Authorization"];
-  //   setUser(null);
-  //   setOpen(false);
-  // };
-  const handleLogout = () => {
-    // 1. 쿠키 제거
-    document.cookie = "accessToken=; path=/; max-age=0";
-
-    // 2. axios 헤더 제거
-    delete axiosInstance.defaults.headers.common["Authorization"];
-
-    // 3. 전역 상태 초기화
-    setCurrentUser(null);
-
-    // 4. 선택: UI 리렌더용 local state 초기화 or 강제 새로고침
-    window.location.reload(); // 또는 상태 리셋
-  };
-
+  const handleLogout = () => logoutUser();
   return (
     <>
       <button
