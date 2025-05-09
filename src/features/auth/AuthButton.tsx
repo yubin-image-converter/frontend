@@ -2,10 +2,10 @@ import { useEffect, useState } from "react";
 
 import { setCurrentUser } from "@/shared/lib";
 import axiosInstance from "@/shared/lib/axiosInstance";
+import { logoutUser } from "@/shared/lib/logoutUser";
 import { getCookie } from "@/utils/getCookie";
 
 import { AuthModal } from "./AuthModal";
-import { logoutUser } from "@/shared/lib/logoutUser";
 
 interface GoogleUser {
   name: string;

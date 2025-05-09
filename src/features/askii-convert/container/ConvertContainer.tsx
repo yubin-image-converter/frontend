@@ -1,13 +1,9 @@
 import { useEffect, useState } from "react";
 
 import { AuthModal } from "@/features/auth/AuthModal"; // ✅ default import일 경우
-import axiosInstance from "@/shared/lib/axiosInstance";
 import { convertImage } from "@/shared/lib/convertImage";
-import {
-  clearCurrentUser,
-  getCurrentUser,
-  setCurrentUser,
-} from "@/shared/lib/userStore";
+import { logoutUser } from "@/shared/lib/logoutUser";
+import { getCurrentUser } from "@/shared/lib/userStore";
 
 import {
   ConvertedImagePreview,
@@ -19,7 +15,6 @@ import {
 import { useSocket } from "../hooks/useSocket";
 import { fetchAsciiResult } from "../services/convertApi";
 import { Format } from "../types";
-import { logoutUser } from "@/shared/lib/logoutUser";
 
 export function ConvertContainer() {
   const [requestId, setRequestId] = useState("");
@@ -32,14 +27,7 @@ export function ConvertContainer() {
 
   const userId = getCurrentUser()?.publicId ?? "";
 
-  useSocket({
-    userId,
-    onAsciiComplete: (msg) => {
-      console.log("✅ ASCII 완료:", msg);
-      setTxtUrl(msg.txtUrl);
-      setStatus("success");
-    },
-  });
+  useSocket({ userId, setTxtUrl, setStatus });
 
   const handleConvert = async (file: File, format: Format) => {
     try {
