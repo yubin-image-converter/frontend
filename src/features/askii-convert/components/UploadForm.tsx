@@ -1,7 +1,7 @@
 import { CloudUpload } from "lucide-react";
 import { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
-import { toast } from "sonner"; // ✅ 토스트
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { getCurrentUser } from "@/shared/lib/userStore";
@@ -15,34 +15,31 @@ interface UploadFormProps {
 
 export function UploadForm({ onConvert, onRequestLogin }: UploadFormProps) {
   const currentUser = getCurrentUser();
-  const isLoggedIn = Boolean(currentUser);
+  const isLoggedIn = !!(currentUser && currentUser.email);
 
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [format, setFormat] = useState<Format>("jpg");
 
-  const onDrop = useCallback((acceptedFiles: File[]) => {
-    const selected = acceptedFiles[0];
-    if (!selected) return;
-    setFile(selected);
-    setPreviewUrl(URL.createObjectURL(selected));
-  }, []);
+  const internalDropHandler = useCallback(
+    (acceptedFiles: File[]) => {
+      if (!isLoggedIn) {
+        toast.info("로그인이 필요합니다. 로그인 후 다시 시도해 주세요.");
+        onRequestLogin();
+        return;
+      }
 
-  const handleConvert = () => {
-    if (!file) return;
+      const selected = acceptedFiles[0];
+      if (!selected) return;
 
-    if (!isLoggedIn) {
-      toast.info("로그인이 필요합니다. 로그인하고 계속해 주세요.");
-      onRequestLogin(); // ✅ 모달 열기 트리거
-      return;
-    }
-
-    onConvert(file, format);
-  };
+      setFile(selected);
+      setPreviewUrl(URL.createObjectURL(selected));
+    },
+    [isLoggedIn, onRequestLogin],
+  );
 
   const { getRootProps, getInputProps } = useDropzone({
-    onDrop,
-    disabled: !isLoggedIn,
+    onDrop: internalDropHandler,
     accept: {
       "image/jpeg": [".jpg", ".jpeg"],
       "image/png": [".png"],
@@ -51,6 +48,18 @@ export function UploadForm({ onConvert, onRequestLogin }: UploadFormProps) {
     maxSize: 10 * 1024 * 1024,
     multiple: false,
   });
+
+  const handleConvert = () => {
+    if (!file) return;
+
+    if (!isLoggedIn) {
+      toast.info("로그인이 필요합니다. 로그인 후 계속해 주세요.");
+      onRequestLogin();
+      return;
+    }
+
+    onConvert(file, format);
+  };
 
   return (
     <div className="flex flex-col items-center gap-4">

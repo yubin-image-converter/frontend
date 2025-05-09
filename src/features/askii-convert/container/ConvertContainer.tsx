@@ -1,8 +1,13 @@
 import { useEffect, useState } from "react";
 
 import { AuthModal } from "@/features/auth/AuthModal"; // ✅ default import일 경우
+import axiosInstance from "@/shared/lib/axiosInstance";
 import { convertImage } from "@/shared/lib/convertImage";
-import { getCurrentUser } from "@/shared/lib/userStore";
+import {
+  clearCurrentUser,
+  getCurrentUser,
+  setCurrentUser,
+} from "@/shared/lib/userStore";
 
 import {
   ConvertedImagePreview,
@@ -49,10 +54,25 @@ export function ConvertContainer() {
 
   const currentUser = getCurrentUser();
 
+  // const handleLogout = () => {
+  //   document.cookie = "accessToken=; path=/; max-age=0";
+  //   setAuthOpen(false);
+  //   window.location.reload(); // 또는 setUser(null)
+  // };
+  // ConvertContainer.tsx 내부에서
+
   const handleLogout = () => {
+    // 1. 쿠키 제거
     document.cookie = "accessToken=; path=/; max-age=0";
-    setAuthOpen(false);
-    window.location.reload(); // 또는 setUser(null)
+
+    // 2. axios 헤더 제거
+    delete axiosInstance.defaults.headers.common["Authorization"];
+
+    // 3. 전역 상태 초기화
+    clearCurrentUser();
+
+    // 4. 새로고침 (선택적으로 리렌더용 상태 초기화도 가능)
+    window.location.reload();
   };
 
   useEffect(() => {

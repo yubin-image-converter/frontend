@@ -28,7 +28,7 @@ export function AuthModal({ open, onClose, user, onLogout }: AuthModalProps) {
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 z-40 bg-black/60" />
         <Dialog.Content
-          className="fixed left-1/2 top-1/2 z-50 w-[ch] -translate-x-1/2 -translate-y-1/2 border border-green-600 bg-black font-mono text-green-300 shadow-md"
+          className="fixed left-1/2 top-1/2 z-[999] w-[ch] -translate-x-1/2 -translate-y-1/2 border border-green-600 bg-black p-10 font-mono text-green-300 shadow-md"
           style={{ width: "50ch" }} // <--- 핵심!
         >
           <pre className="pt-4 text-center text-sm leading-none text-green-300">
