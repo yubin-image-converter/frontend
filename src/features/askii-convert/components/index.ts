@@ -3,3 +3,10 @@
  */
 
 export * from "./index";
+
+export { UploadForm } from "./UploadForm";
+export { ProgressBar } from "./ProgressBar";
+export { StatusMessage } from "./StatusMessage";
+export { ConvertedImagePreview } from "./ConvertedImagePreview";
+export { WorkerPanel } from "./WorkerPanel";
+export type { Format } from "./UploadForm";
