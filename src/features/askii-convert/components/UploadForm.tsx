@@ -1,18 +1,22 @@
-// src/features/askii-convert/components/UploadForm.tsx
 import { CloudUpload } from "lucide-react";
 import { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
-import { Button } from "@/components/ui/button";
+import { toast } from "sonner"; // ✅ 토스트
 
-const formatOptions = ["jpg", "png", "webp"] as const;
-export type Format = (typeof formatOptions)[number];
+import { Button } from "@/components/ui/button";
+import { getCurrentUser } from "@/shared/lib/userStore";
+
+import { Format, formatOptions } from "../types";
 
 interface UploadFormProps {
   onConvert: (file: File, format: Format) => void;
-  disabled?: boolean;
+  onRequestLogin: () => void;
 }
 
-export function UploadForm({ onConvert, disabled }: UploadFormProps) {
+export function UploadForm({ onConvert, onRequestLogin }: UploadFormProps) {
+  const currentUser = getCurrentUser();
+  const isLoggedIn = Boolean(currentUser);
+
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [format, setFormat] = useState<Format>("jpg");
@@ -24,8 +28,21 @@ export function UploadForm({ onConvert, disabled }: UploadFormProps) {
     setPreviewUrl(URL.createObjectURL(selected));
   }, []);
 
+  const handleConvert = () => {
+    if (!file) return;
+
+    if (!isLoggedIn) {
+      toast.info("로그인이 필요합니다. 로그인하고 계속해 주세요.");
+      onRequestLogin(); // ✅ 모달 열기 트리거
+      return;
+    }
+
+    onConvert(file, format);
+  };
+
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
+    disabled: !isLoggedIn,
     accept: {
       "image/jpeg": [".jpg", ".jpeg"],
       "image/png": [".png"],
@@ -37,6 +54,7 @@ export function UploadForm({ onConvert, disabled }: UploadFormProps) {
 
   return (
     <div className="flex flex-col items-center gap-4">
+      {/* 업로드 박스 */}
       <div
         {...getRootProps()}
         className="w-full max-w-md cursor-pointer rounded border-2 border-dashed border-green-500 bg-black p-8 text-center text-green-500 hover:bg-[#111]"
@@ -49,25 +67,26 @@ export function UploadForm({ onConvert, disabled }: UploadFormProps) {
             className="h-auto max-h-[300px] w-full rounded object-contain"
           />
         ) : (
-          <>
-            <CloudUpload size={48} />
-            <p className="mt-2">Click or drag to upload</p>
-          </>
+          <div className="flex flex-col items-center justify-center">
+            <CloudUpload size={48} className="mb-2" />
+            <p>Click or drag to upload</p>
+          </div>
         )}
       </div>
 
+      {/* 포맷 선택 & 변환 */}
       {file && (
         <>
           <div className="flex gap-2">
             {formatOptions.map((f) => (
               <button
                 key={f}
+                onClick={() => setFormat(f)}
                 className={`rounded border border-green-500 px-3 py-1 text-sm capitalize ${
                   format === f
                     ? "bg-green-600 text-black"
                     : "bg-black text-green-300 hover:bg-green-800 hover:text-white"
                 }`}
-                onClick={() => setFormat(f)}
               >
                 {f}
               </button>
@@ -75,9 +94,8 @@ export function UploadForm({ onConvert, disabled }: UploadFormProps) {
           </div>
 
           <Button
-            disabled={disabled}
             className="bg-green-500 text-black hover:bg-green-400"
-            onClick={() => file && onConvert(file, format)}
+            onClick={handleConvert}
           >
             Convert Image
           </Button>

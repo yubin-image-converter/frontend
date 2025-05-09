@@ -1,25 +1,29 @@
-// src/features/askii-convert/container/ConvertContainer.tsx
 import { useEffect, useState } from "react";
-import {
-  UploadForm,
-  ProgressBar,
-  StatusMessage,
-  ConvertedImagePreview,
-  WorkerPanel,
-  Format,
-} from "../components";
-import { fetchAsciiResult } from "../services/convertApi";
+
+import { AuthModal } from "@/features/auth/AuthModal"; // ✅ default import일 경우
 import { convertImage } from "@/shared/lib/convertImage";
-import { useSocket } from "../hooks/useSocket";
 import { getCurrentUser } from "@/shared/lib/userStore";
 
+import {
+  ConvertedImagePreview,
+  ProgressBar,
+  StatusMessage,
+  UploadForm,
+  WorkerPanel,
+} from "../components";
+import { useSocket } from "../hooks/useSocket";
+import { fetchAsciiResult } from "../services/convertApi";
+import { Format } from "../types";
+
 export function ConvertContainer() {
-  const [requestId, setRequestId] = useState<string>("");
+  const [requestId, setRequestId] = useState("");
   const [txtUrl, setTxtUrl] = useState<string | null>(null);
   const [status, setStatus] = useState<
     "idle" | "converting" | "success" | "error"
   >("idle");
-  const [percent, setPercent] = useState<number>(0);
+  const [percent, setPercent] = useState(0);
+  const [authOpen, setAuthOpen] = useState(false); // ✅ auth modal state
+
   const userId = getCurrentUser()?.publicId ?? "";
 
   useSocket({
@@ -43,6 +47,14 @@ export function ConvertContainer() {
     }
   };
 
+  const currentUser = getCurrentUser();
+
+  const handleLogout = () => {
+    document.cookie = "accessToken=; path=/; max-age=0";
+    setAuthOpen(false);
+    window.location.reload(); // 또는 setUser(null)
+  };
+
   useEffect(() => {
     if (!requestId) return;
     fetchAsciiResult(requestId).then((url) => {
@@ -52,11 +64,21 @@ export function ConvertContainer() {
 
   return (
     <div className="flex flex-col gap-6">
+      {/* 업로드 영역 */}
       <UploadForm
         onConvert={handleConvert}
-        disabled={status === "converting"}
+        onRequestLogin={() => setAuthOpen(true)}
       />
 
+      {/* 로그인 모달 */}
+      <AuthModal
+        open={authOpen}
+        onClose={() => setAuthOpen(false)}
+        user={currentUser}
+        onLogout={handleLogout}
+      />
+
+      {/* 진행률 / 상태 메시지 */}
       {status !== "idle" && (
         <>
           <ProgressBar percent={percent} />
@@ -65,6 +87,7 @@ export function ConvertContainer() {
         </>
       )}
 
+      {/* 결과 ASCII */}
       {txtUrl && <ConvertedImagePreview txtUrl={txtUrl} />}
     </div>
   );

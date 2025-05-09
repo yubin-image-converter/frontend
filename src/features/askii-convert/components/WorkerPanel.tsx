@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
+
 import { useTypewriterLoop } from "@/shared/hooks";
 
 interface Worker {
