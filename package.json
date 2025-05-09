@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint . --fix",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "generate:barrels": "barrelsby --directory src/features/askii-convert/components && barrelsby --directory src/shared/components && barrelsby --directory src/shared/hooks && barrelsby --directory src/shared/lib && barrelsby --directory src/features/auth"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.13",
@@ -38,6 +39,7 @@
     "@types/react-router-dom": "^5.3.3",
     "@typescript-eslint/parser": "^8.30.1",
     "@vitejs/plugin-react": "^4.3.4",
+    "barrelsby": "^2.8.1",
     "eslint": "^9.22.0",
     "eslint-import-resolver-typescript": "^4.3.2",
     "eslint-plugin-import": "^2.31.0",

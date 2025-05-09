@@ -1,0 +1,6 @@
+{
+  "directory": "src",
+  "delete": true,
+  "include": ["features", "shared"],
+  "structure": "filesystem"
+}
