@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-
 import { AuthModal } from "@/features/auth/AuthModal";
 import {
   ConvertedImagePreview,
@@ -49,14 +48,22 @@ export function ConvertContainer() {
   }, [requestId]);
 
   return (
-    <div className="flex flex-col gap-6">
-      {/* 업로드 & 결과 나란히 */}
-      <div className="flex flex-col items-start gap-6 md:flex-row">
+    <div className="flex flex-col gap-6 px-4 transition-all duration-300">
+      {/* 업로드 & 결과 패널 */}
+      <div
+        className={`mx-auto flex max-w-6xl flex-col items-center gap-6 transition-all duration-500 md:flex-row ${
+          txtUrl ? "md:items-start md:justify-between" : "md:justify-center"
+        }`}
+      >
         <UploadForm
           onConvert={handleConvert}
           onRequestLogin={() => setAuthOpen(true)}
         />
-        {txtUrl && <ConvertedImagePreview txtUrl={txtUrl} />}
+        {txtUrl && (
+          <div className="w-full md:w-[640px]">
+            <ConvertedImagePreview txtUrl={txtUrl} />
+          </div>
+        )}
       </div>
 
       {/* 로그인 모달 */}
