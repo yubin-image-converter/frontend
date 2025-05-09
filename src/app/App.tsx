@@ -5,7 +5,7 @@ import { Toaster } from "sonner";
 
 import { Footer, Header, Main } from "@/shared/components";
 
-import { AuthProvider, SocketProvider } from "./providers";
+import { AuthProvider } from "./providers";
 
 function App() {
   return (
@@ -13,9 +13,7 @@ function App() {
       <Toaster position="top-center" richColors />
       <Header />
       <AuthProvider>
-        <SocketProvider>
-          <Main />
-        </SocketProvider>
+        <Main />
       </AuthProvider>
       <Footer />
     </div>

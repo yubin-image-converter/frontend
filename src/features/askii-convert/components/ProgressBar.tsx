@@ -7,14 +7,14 @@ interface ProgressBarProps {
 export function ProgressBar({ percent }: ProgressBarProps) {
   const totalBars = 30;
 
-  // blinking █
+  // █ 커서 깜빡임
   const [showCursor, setShowCursor] = useState(true);
   useEffect(() => {
     const interval = setInterval(() => setShowCursor((prev) => !prev), 500);
     return () => clearInterval(interval);
   }, []);
 
-  // spinner
+  // Spinner 애니메이션
   const spinnerFrames = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
   const [frameIndex, setFrameIndex] = useState(0);
   useEffect(() => {
@@ -26,8 +26,24 @@ export function ProgressBar({ percent }: ProgressBarProps) {
     }
   }, [percent, spinnerFrames.length]);
 
+  // Done 표시 딜레이
+  const [showDone, setShowDone] = useState(false);
+  useEffect(() => {
+    if (percent >= 100) {
+      const timer = setTimeout(() => setShowDone(true), 500);
+      return () => clearTimeout(timer);
+    } else {
+      setShowDone(false);
+    }
+  }, [percent]);
+
   const spinner = spinnerFrames[frameIndex];
-  let content = percent < 100 ? `Loading... ${spinner}` : "✓ Done!";
+  let content =
+    percent < 100
+      ? `Loading... ${spinner}`
+      : showDone
+        ? "✓ Done!"
+        : `Loading... ${spinner}`;
 
   if (content.length > totalBars) {
     content = content.slice(0, totalBars);

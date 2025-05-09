@@ -1,5 +1,9 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+
 import { AuthModal } from "@/features/auth/AuthModal";
+import { logoutUser } from "@/shared/lib/logoutUser";
+import { getCurrentUser } from "@/shared/lib/userStore";
+
 import {
   ConvertedImagePreview,
   ProgressBar,
@@ -7,45 +11,30 @@ import {
   UploadForm,
   WorkerPanel,
 } from "../components";
-import { convertImage } from "@/shared/lib/convertImage";
-import { logoutUser } from "@/shared/lib/logoutUser";
-import { getCurrentUser } from "@/shared/lib/userStore";
-import { useSocket } from "../hooks/useSocket";
-import { fetchAsciiResult } from "../services/convertApi";
 import { Format } from "../types";
 
-export function ConvertContainer() {
-  const [requestId, setRequestId] = useState("");
-  const [txtUrl, setTxtUrl] = useState<string | null>(null);
-  const [status, setStatus] = useState<
-    "idle" | "converting" | "success" | "error"
-  >("idle");
-  const [percent, setPercent] = useState(0);
-  const [authOpen, setAuthOpen] = useState(false);
+interface Props {
+  txtUrl: string | null;
+  setTxtUrl: (url: string) => void;
+  status: "idle" | "converting" | "success" | "error";
+  setStatus: (status: "idle" | "converting" | "success" | "error") => void;
+  percent: number;
+  setPercent: (p: number) => void;
+  handleConvert: (file: File, format: Format) => Promise<void>;
+}
 
+export function ConvertContainer({
+  txtUrl,
+  setTxtUrl,
+  status,
+  setStatus,
+  percent,
+  setPercent,
+  handleConvert,
+}: Props) {
   const currentUser = getCurrentUser();
   const userId = currentUser?.publicId ?? "";
-
-  useSocket({ userId, setTxtUrl, setStatus });
-
-  const handleConvert = async (file: File, format: Format) => {
-    try {
-      setStatus("converting");
-      setPercent(0);
-      const { requestId } = await convertImage(file, format);
-      setRequestId(requestId);
-    } catch (err) {
-      console.error("변환 실패:", err);
-      setStatus("error");
-    }
-  };
-
-  useEffect(() => {
-    if (!requestId) return;
-    fetchAsciiResult(requestId).then((url) => {
-      if (url) setTxtUrl(url);
-    });
-  }, [requestId]);
+  const [authOpen, setAuthOpen] = useState(false);
 
   return (
     <div className="flex flex-col gap-6 px-4 transition-all duration-300">
