@@ -43,6 +43,8 @@
 // }
 import { useEffect, useState } from "react";
 
+import axiosInstance from "@/shared/lib/axiosInstance";
+
 interface Props {
   txtUrl: string | null;
 }
@@ -53,14 +55,14 @@ export function ConvertedImagePreview({ txtUrl }: Props) {
   useEffect(() => {
     if (!txtUrl) return;
 
-    fetch(txtUrl)
-      .then((res) => res.text())
-      .then(setAsciiContent)
+    axiosInstance
+      .get(txtUrl, { responseType: "text" })
+      .then((res) => setAsciiContent(res.data))
       .catch((err) => {
         console.error("❌ ASCII 파일 불러오기 실패:", err);
+        setAsciiContent("불러오기 실패");
       });
   }, [txtUrl]);
-
   if (!txtUrl) {
     return <p className="text-gray-500">아직 변환 결과가 없습니다.</p>;
   }

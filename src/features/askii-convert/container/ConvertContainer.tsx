@@ -1,10 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { AuthModal } from "@/features/auth/AuthModal"; // ✅ default import일 경우
-import { convertImage } from "@/shared/lib/convertImage";
-import { logoutUser } from "@/shared/lib/logoutUser";
-import { getCurrentUser } from "@/shared/lib/userStore";
-
+import { AuthModal } from "@/features/auth/AuthModal";
 import {
   ConvertedImagePreview,
   ProgressBar,
@@ -12,6 +8,9 @@ import {
   UploadForm,
   WorkerPanel,
 } from "../components";
+import { convertImage } from "@/shared/lib/convertImage";
+import { logoutUser } from "@/shared/lib/logoutUser";
+import { getCurrentUser } from "@/shared/lib/userStore";
 import { useSocket } from "../hooks/useSocket";
 import { fetchAsciiResult } from "../services/convertApi";
 import { Format } from "../types";
@@ -23,9 +22,10 @@ export function ConvertContainer() {
     "idle" | "converting" | "success" | "error"
   >("idle");
   const [percent, setPercent] = useState(0);
-  const [authOpen, setAuthOpen] = useState(false); // ✅ auth modal state
+  const [authOpen, setAuthOpen] = useState(false);
 
-  const userId = getCurrentUser()?.publicId ?? "";
+  const currentUser = getCurrentUser();
+  const userId = currentUser?.publicId ?? "";
 
   useSocket({ userId, setTxtUrl, setStatus });
 
@@ -36,14 +36,10 @@ export function ConvertContainer() {
       const { requestId } = await convertImage(file, format);
       setRequestId(requestId);
     } catch (err) {
-      setStatus("error");
       console.error("변환 실패:", err);
+      setStatus("error");
     }
   };
-
-  const currentUser = getCurrentUser();
-
-  const handleLogout = () => logoutUser();
 
   useEffect(() => {
     if (!requestId) return;
@@ -54,21 +50,24 @@ export function ConvertContainer() {
 
   return (
     <div className="flex flex-col gap-6">
-      {/* 업로드 영역 */}
-      <UploadForm
-        onConvert={handleConvert}
-        onRequestLogin={() => setAuthOpen(true)}
-      />
+      {/* 업로드 & 결과 나란히 */}
+      <div className="flex flex-col items-start gap-6 md:flex-row">
+        <UploadForm
+          onConvert={handleConvert}
+          onRequestLogin={() => setAuthOpen(true)}
+        />
+        {txtUrl && <ConvertedImagePreview txtUrl={txtUrl} />}
+      </div>
 
       {/* 로그인 모달 */}
       <AuthModal
         open={authOpen}
         onClose={() => setAuthOpen(false)}
         user={currentUser}
-        onLogout={handleLogout}
+        onLogout={logoutUser}
       />
 
-      {/* 진행률 / 상태 메시지 */}
+      {/* 진행 상태 */}
       {status !== "idle" && (
         <>
           <ProgressBar percent={percent} />
@@ -76,9 +75,6 @@ export function ConvertContainer() {
           <WorkerPanel />
         </>
       )}
-
-      {/* 결과 ASCII */}
-      {txtUrl && <ConvertedImagePreview txtUrl={txtUrl} />}
     </div>
   );
 }
