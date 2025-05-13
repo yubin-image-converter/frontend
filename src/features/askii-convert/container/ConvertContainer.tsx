@@ -15,25 +15,18 @@ import { Format } from "../types";
 
 interface Props {
   txtUrl: string | null;
-  setTxtUrl: (url: string) => void;
+  handleConvert: (file: File, format: Format) => void;
   status: "idle" | "converting" | "success" | "error";
-  setStatus: (status: "idle" | "converting" | "success" | "error") => void;
   percent: number;
-  setPercent: (p: number) => void;
-  handleConvert: (file: File, format: Format) => Promise<void>;
 }
 
 export function ConvertContainer({
   txtUrl,
-  setTxtUrl,
-  status,
-  setStatus,
-  percent,
-  setPercent,
   handleConvert,
+  status,
+  percent,
 }: Props) {
   const currentUser = getCurrentUser();
-  const userId = currentUser?.publicId ?? "";
   const [authOpen, setAuthOpen] = useState(false);
 
   return (

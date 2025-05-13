@@ -3,7 +3,7 @@
  */
 
 export * from "./DosPanel";
-export * from "./DosTabs";
+// export * from "./DosTabs";
 export * from "./Footer";
 export * from "./Header";
 export * from "./Main";

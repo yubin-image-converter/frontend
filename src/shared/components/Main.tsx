@@ -19,7 +19,7 @@ export function Main() {
   const currentUser = getCurrentUser();
   const userId = currentUser?.publicId ?? "";
 
-  const handleAsciiComplete = useCallback((msg: any) => {
+  const handleAsciiComplete = useCallback((_msg: any) => {
     console.log("🎉 ASCII 변환 완료 후처리");
   }, []);
 
@@ -60,11 +60,11 @@ export function Main() {
       <div className="w-full max-w-5xl">
         <ConvertContainer
           txtUrl={txtUrl}
-          setTxtUrl={setTxtUrl}
+          // setTxtUrl={setTxtUrl}
           status={status}
-          setStatus={setStatus}
+          // setStatus={setStatus}
           percent={percent}
-          setPercent={setPercent}
+          // setPercent={setPercent}
           handleConvert={handleConvert}
         />
       </div>
