@@ -45,31 +45,19 @@ interface AsciiLoaderProps {
 }
 
 export function AsciiLoader({ message = "Loading..." }: AsciiLoaderProps) {
-  const animatedMessage = useTypewriterLoop(message, 50, 1500); // speed & delay 조절 가능
-  const [frame, setFrame] = useState(0);
+  const animatedMessage = useTypewriterLoop(message, 50, 1500);
+  const frame = Math.min(animatedMessage.length, 20); // 동기화된 frame
 
-  const frames = Array.from({ length: 20 }, (_, i) => {
-    const filled = "▒".repeat(i + 1);
-    const empty = "░".repeat(20 - i - 1);
-    const bar = `[${filled}${empty}]`;
-
-    const shouldBreak =
-      typeof window !== "undefined" && window.innerWidth < 480;
-    const msg = shouldBreak ? `\n${animatedMessage}` : ` ${animatedMessage}`;
-
-    return `${bar}${msg}`;
-  });
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setFrame((prev) => (prev + 1) % frames.length);
-    }, 60);
-    return () => clearInterval(interval);
-  }, [frames.length]);
+  const filled = "▒".repeat(frame);
+  const empty = "░".repeat(20 - frame);
+  const bar = `[${filled}${empty}]`;
 
   return (
-    <pre className="max-w-full overflow-x-auto whitespace-pre-wrap break-words font-mono text-sm text-green-500">
-      {frames[frame]}
-    </pre>
+    <div className="w-full font-mono text-sm text-green-500">
+      <div className="flex flex-col items-center justify-center gap-1 font-mono text-sm text-green-500">
+        <pre className="text-center">{bar}</pre>
+        <pre className="text-center">{animatedMessage}</pre>
+      </div>
+    </div>
   );
 }
