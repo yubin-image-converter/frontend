@@ -60,6 +60,8 @@ export function AsciiLoader({ message = "Loading..." }: AsciiLoaderProps) {
   }, [frames.length]);
 
   return (
-    <pre className="font-mono text-sm text-green-500">{frames[frame]}</pre>
+    <pre className="max-w-full overflow-x-auto whitespace-pre-wrap break-words font-mono text-sm text-green-500">
+      {frames[frame]}
+    </pre>
   );
 }
