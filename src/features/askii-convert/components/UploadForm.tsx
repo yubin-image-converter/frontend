@@ -11,14 +11,27 @@ import { Format } from "../types";
 interface UploadFormProps {
   onConvert: (file: File, format: Format) => void;
   onRequestLogin: () => void;
+  status: "idle" | "uploading" | "converting" | "success" | "error";
+  onReset: () => void;
 }
 
-export function UploadForm({ onConvert, onRequestLogin }: UploadFormProps) {
+export function UploadForm({
+  onConvert,
+  onRequestLogin,
+  status,
+  onReset,
+}: UploadFormProps) {
   const currentUser = getCurrentUser();
   const isLoggedIn = !!(currentUser && currentUser.email);
 
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
+  const handleReset = () => {
+    setFile(null);
+    setPreviewUrl(null);
+    onReset();
+  };
 
   const internalDropHandler = useCallback(
     (acceptedFiles: File[]) => {
@@ -84,12 +97,24 @@ export function UploadForm({ onConvert, onRequestLogin }: UploadFormProps) {
 
       {/* 포맷 선택 & 변환 */}
       {file && (
-        <Button
-          className="bg-green-500 text-black hover:bg-green-400"
-          onClick={handleConvert}
-        >
-          Convert Image
-        </Button>
+        <div className="mt-2 flex gap-4">
+          <Button
+            className="bg-green-500 text-black hover:bg-green-400"
+            onClick={handleConvert}
+          >
+            Convert Image
+          </Button>
+
+          {(status === "success" || status === "error") && (
+            <Button
+              variant="outline"
+              className="border-green-600 bg-black text-green-300 hover:bg-green-700 hover:text-white"
+              onClick={handleReset}
+            >
+              Reset Upload
+            </Button>
+          )}
+        </div>
       )}
     </div>
   );

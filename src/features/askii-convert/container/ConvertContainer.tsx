@@ -12,6 +12,7 @@ interface Props {
   txtUrl: string | null;
   handleConvert: (file: File, format: Format) => void;
   status: "idle" | "uploading" | "converting" | "success" | "error";
+  onReset: () => void;
   percent: number;
 }
 
@@ -19,6 +20,7 @@ export function ConvertContainer({
   txtUrl,
   handleConvert,
   status,
+  onReset,
   percent,
 }: Props) {
   const currentUser = getCurrentUser();
@@ -35,6 +37,8 @@ export function ConvertContainer({
         <UploadForm
           onConvert={handleConvert}
           onRequestLogin={() => setAuthOpen(true)}
+          status={status}
+          onReset={onReset}
         />
         {txtUrl && (
           <div className="w-full min-w-0 max-w-[768px] flex-1">

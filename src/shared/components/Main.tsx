@@ -65,6 +65,10 @@ export function Main() {
           status={status}
           percent={percent}
           handleConvert={handleConvert}
+          onReset={() => {
+            setStatus("idle");
+            setTxtUrl(null);
+          }}
         />
       </div>
     </main>
