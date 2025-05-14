@@ -26,7 +26,7 @@ export function ProgressBar({ percent }: ProgressBarProps) {
   // █ 커서 깜빡임
   const [showCursor, setShowCursor] = useState(true);
   useEffect(() => {
-    const interval = setInterval(() => setShowCursor((prev) => !prev), 0);
+    const interval = setInterval(() => setShowCursor((prev) => !prev), 500);
     return () => clearInterval(interval);
   }, []);
 

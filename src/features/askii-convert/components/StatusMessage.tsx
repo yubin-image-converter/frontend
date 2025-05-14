@@ -9,9 +9,9 @@ export function StatusMessage({ status }: StatusMessageProps) {
     status === "uploading"
       ? ""
       : status === "converting"
-        ? "Converting image. Please wait..."
+        ? ""
         : status === "success"
-          ? "Conversion complete! Ready to download."
+          ? ""
           : status === "error"
             ? "An error occurred. Please try again."
             : "";
