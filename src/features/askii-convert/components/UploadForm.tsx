@@ -19,7 +19,6 @@ export function UploadForm({ onConvert, onRequestLogin }: UploadFormProps) {
 
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  // const [format, setFormat] = useState<Format>("jpg");
 
   const internalDropHandler = useCallback(
     (acceptedFiles: File[]) => {

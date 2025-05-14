@@ -10,7 +10,7 @@ import { convertApi } from "../lib";
 export function Main() {
   const [txtUrl, setTxtUrl] = useState<string | null>(null);
   const [status, setStatus] = useState<
-    "idle" | "converting" | "success" | "error"
+    "idle" | "uploading" | "converting" | "success" | "error"
   >("idle");
   const [percent, setPercent] = useState(0);
   const [requestId, setRequestId] = useState("");
@@ -18,6 +18,7 @@ export function Main() {
   const currentUser = getCurrentUser();
   const userId = currentUser?.publicId ?? "";
 
+  console.log(userId);
   const handleAsciiComplete = useCallback((_msg: any) => {
     console.log("🎉 ASCII 변환 완료 후처리");
   }, []);
@@ -29,10 +30,11 @@ export function Main() {
 
   const handleConvert = async (file: File) => {
     try {
-      setStatus("converting");
+      setStatus("uploading");
       setPercent(0);
       const { requestId } = await convertApi(file, "jpg");
       setRequestId(requestId);
+      setStatus("converting");
     } catch (err) {
       console.error("변환 실패:", err);
       setStatus("error");
@@ -43,6 +45,7 @@ export function Main() {
     if (!requestId) return;
     fetchAsciiResult(requestId).then((url) => {
       if (url) setTxtUrl(url);
+      setStatus("success");
     });
   }, [requestId]);
 

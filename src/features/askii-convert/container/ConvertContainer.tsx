@@ -11,12 +11,14 @@ import {
   UploadForm,
   WorkerPanel,
 } from "../components";
+import { AsciiLoader } from "../components/AsciiLoader";
+import { AsciiLoadingPanel } from "../components/\bAsciiLoadingPanel";
 import { Format } from "../types";
 
 interface Props {
   txtUrl: string | null;
   handleConvert: (file: File, format: Format) => void;
-  status: "idle" | "converting" | "success" | "error";
+  status: "idle" | "uploading" | "converting" | "success" | "error";
   percent: number;
 }
 
@@ -59,8 +61,7 @@ export function ConvertContainer({
       {/* 진행 상태 */}
       {status !== "idle" && (
         <>
-          <ProgressBar percent={percent} />
-          <StatusMessage status={status} />
+          <AsciiLoadingPanel status={status} percent={percent} />
           <WorkerPanel />
         </>
       )}

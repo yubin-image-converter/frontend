@@ -1,18 +1,20 @@
 import { useTypewriter } from "@/shared/hooks";
 
 interface StatusMessageProps {
-  status: "idle" | "converting" | "success" | "error";
+  status: "idle" | "uploading" | "converting" | "success" | "error";
 }
 
 export function StatusMessage({ status }: StatusMessageProps) {
   const message =
-    status === "converting"
-      ? "Converting image. Please wait..."
-      : status === "success"
-        ? "Conversion complete! Ready to download."
-        : status === "error"
-          ? "An error occurred. Please try again."
-          : "";
+    status === "uploading"
+      ? ""
+      : status === "converting"
+        ? "Converting image. Please wait..."
+        : status === "success"
+          ? "Conversion complete! Ready to download."
+          : status === "error"
+            ? "An error occurred. Please try again."
+            : "";
 
   const typed = useTypewriter(message, 35);
 
