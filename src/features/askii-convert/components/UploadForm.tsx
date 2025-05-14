@@ -36,7 +36,7 @@ export function UploadForm({
   const internalDropHandler = useCallback(
     (acceptedFiles: File[]) => {
       if (!isLoggedIn) {
-        toast.info("로그인이 필요합니다. 로그인 후 다시 시도해 주세요.");
+        toast.info("Login required. Please sign in and try again.");
         onRequestLogin();
         return;
       }
