@@ -4,15 +4,8 @@ import { AuthModal } from "@/features/auth/AuthModal";
 import { logoutUser } from "@/shared/lib/logoutUser";
 import { getCurrentUser } from "@/shared/lib/userStore";
 
-import {
-  ConvertedImagePreview,
-  ProgressBar,
-  StatusMessage,
-  UploadForm,
-  WorkerPanel,
-} from "../components";
-import { AsciiLoader } from "../components/AsciiLoader";
-import { AsciiLoadingPanel } from "../components/\bAsciiLoadingPanel";
+import { ConvertedImagePreview, UploadForm, WorkerPanel } from "../components";
+import { AsciiLoadingPanel } from "../components/AsciiLoadingPanel";
 import { Format } from "../types";
 
 interface Props {
