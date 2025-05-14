@@ -4,3 +4,4 @@
 
 export * from "./useTypewriter";
 export * from "./useTypewriterLoop";
+export * from "./useWindowSize";
