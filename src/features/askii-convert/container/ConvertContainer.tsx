@@ -29,19 +29,29 @@ export function ConvertContainer({
   return (
     <div className="flex flex-col gap-6 px-4 transition-all duration-300 sm:px-6 lg:px-8">
       {/* 업로드 & 결과 패널 */}
+      {/* <div
+        className={`mx-auto flex w-full max-w-full flex-col items-center gap-6 transition-all duration-500 md:flex-row ${
+          txtUrl ? "md:items-start md:justify-between" : "md:justify-center"
+        }`}
+      > */}
       <div
         className={`mx-auto flex w-full max-w-full flex-col items-center gap-6 transition-all duration-500 md:flex-row ${
           txtUrl ? "md:items-start md:justify-between" : "md:justify-center"
         }`}
       >
-        <UploadForm
-          onConvert={handleConvert}
-          onRequestLogin={() => setAuthOpen(true)}
-          status={status}
-          onReset={onReset}
-        />
+        {/* 좌측: UploadForm */}
+        <div className="w-full max-w-[360px] shrink-0">
+          <UploadForm
+            onConvert={handleConvert}
+            onRequestLogin={() => setAuthOpen(true)}
+            status={status}
+            onReset={onReset}
+          />
+        </div>
+
+        {/* 우측: ASCII 결과 */}
         {txtUrl && (
-          <div className="w-full min-w-0 flex-1 md:max-w-[768px]">
+          <div className="w-full min-w-0 flex-1 overflow-hidden md:max-w-[768px]">
             <ConvertedImagePreview txtUrl={txtUrl} />
           </div>
         )}

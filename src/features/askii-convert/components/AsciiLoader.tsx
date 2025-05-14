@@ -37,6 +37,7 @@
 //     <pre className="font-mono text-sm text-green-500">{frames[frame]}</pre>
 //   );
 // }
+import { useTypewriterLoop } from "@/shared/hooks";
 import { useEffect, useState } from "react";
 
 interface AsciiLoaderProps {
@@ -44,12 +45,19 @@ interface AsciiLoaderProps {
 }
 
 export function AsciiLoader({ message = "Loading..." }: AsciiLoaderProps) {
+  const animatedMessage = useTypewriterLoop(message, 50, 1500); // speed & delay 조절 가능
   const [frame, setFrame] = useState(0);
 
   const frames = Array.from({ length: 20 }, (_, i) => {
     const filled = "▒".repeat(i + 1);
     const empty = "░".repeat(20 - i - 1);
-    return `[${filled}${empty}] ${message}`;
+    const bar = `[${filled}${empty}]`;
+
+    const shouldBreak =
+      typeof window !== "undefined" && window.innerWidth < 480;
+    const msg = shouldBreak ? `\n${animatedMessage}` : ` ${animatedMessage}`;
+
+    return `${bar}${msg}`;
   });
 
   useEffect(() => {
