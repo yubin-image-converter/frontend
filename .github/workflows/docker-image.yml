@@ -24,6 +24,7 @@ jobs:
           VITE_API_SERVER_URL=${{ secrets.VITE_API_SERVER_URL }}
           VITE_AUTHENTICATION_SERVER_URL=${{ secrets.VITE_AUTHENTICATION_SERVER_URL }}
           VITE_GOOGLE_CLIENT_ID=${{ secrets.VITE_GOOGLE_CLIENT_ID }}
+          VITE_SOCKET_SERVER_URL=${{ secrets.VITE_SOCKET_SERVER_URL }}
           EOF
 
       - name: Create .env.production
@@ -32,6 +33,7 @@ jobs:
           VITE_API_SERVER_URL=${{ secrets.VITE_API_SERVER_URL }}
           VITE_AUTHENTICATION_SERVER_URL=${{ secrets.VITE_AUTHENTICATION_SERVER_URL }}
           VITE_GOOGLE_CLIENT_ID=${{ secrets.VITE_GOOGLE_CLIENT_ID }}
+          VITE_SOCKET_SERVER_URL=${{ secrets.VITE_SOCKET_SERVER_URL }}
           EOF
 
       - name: Install deps & Build
