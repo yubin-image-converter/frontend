@@ -55,24 +55,26 @@ export function AuthModal({ open, onClose, user, onLogout }: AuthModalProps) {
 
             {user ? (
               <>
-                <UserCircle className="mt-4 h-10 w-10 text-green-700" />
-                <div className="mt-2 break-all text-center text-green-300">
-                  {user.name}
+                <div className="mt-5 flex w-full flex-col items-center text-sm">
+                  <UserCircle className="h-10 w-10 text-green-700" />
+                  <div className="mt-2 break-all text-green-300">
+                    {user.name}
+                  </div>
+                  <div className="mb-3 break-all text-green-600">
+                    {user.email}
+                  </div>
+                  <Button
+                    onClick={onLogout}
+                    className="max-w-full border border-green-700 bg-black px-4 py-1 font-mono text-green-300 hover:bg-green-700 hover:text-black"
+                  >
+                    <LogOut size={14} className="mr-1" />
+                    로그아웃
+                  </Button>
                 </div>
-                <div className="break-all text-center text-green-600">
-                  {user.email}
-                </div>
-                <Button
-                  onClick={onLogout}
-                  className="mt-4 border border-green-700 bg-black px-4 py-1 font-mono text-green-300 hover:bg-green-700 hover:text-black"
-                >
-                  <LogOut size={14} className="mr-1" />
-                  로그아웃
-                </Button>
               </>
             ) : (
               <>
-                <div className="mb-2 mt-4 text-center text-green-600">
+                <div className="mb-3 mt-6 text-center text-sm text-green-600">
                   Google 계정으로 로그인하세요.
                 </div>
                 <Button
