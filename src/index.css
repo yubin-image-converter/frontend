@@ -1,6 +1,13 @@
-body {
+/* body {
   font-family: "Courier New", Courier, "Lucida Console", monospace;
+} */
+
+body {
+  font-family: "Roboto Mono", monospace;
+  background-color: black;
+  color: #00ff00;
 }
+
 /* globals.css */
 
 ::-webkit-scrollbar {
