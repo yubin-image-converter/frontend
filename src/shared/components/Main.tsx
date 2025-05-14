@@ -6,7 +6,7 @@ import { fetchAsciiResult } from "@/features/askii-convert/services/convertApi";
 import { Format } from "@/features/askii-convert/types";
 import { getCurrentUser } from "@/shared/lib/userStore";
 
-import { convertImage } from "../lib";
+import { convertApi } from "../lib";
 
 export function Main() {
   const [txtUrl, setTxtUrl] = useState<string | null>(null);
@@ -32,7 +32,7 @@ export function Main() {
     try {
       setStatus("converting");
       setPercent(0);
-      const { requestId } = await convertImage(file, format);
+      const { requestId } = await convertApi(file, format);
       setRequestId(requestId);
     } catch (err) {
       console.error("변환 실패:", err);
