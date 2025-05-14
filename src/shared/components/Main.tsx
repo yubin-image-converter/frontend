@@ -3,7 +3,6 @@ import { useCallback, useEffect, useState } from "react";
 import { ConvertContainer } from "@/features/askii-convert/container/ConvertContainer";
 import { useSocket } from "@/features/askii-convert/hooks/useSocket";
 import { fetchAsciiResult } from "@/features/askii-convert/services/convertApi";
-import { Format } from "@/features/askii-convert/types";
 import { getCurrentUser } from "@/shared/lib/userStore";
 
 import { convertApi } from "../lib";
@@ -28,11 +27,11 @@ export function Main() {
     setPercent(p);
   }, []);
 
-  const handleConvert = async (file: File, format: Format) => {
+  const handleConvert = async (file: File) => {
     try {
       setStatus("converting");
       setPercent(0);
-      const { requestId } = await convertApi(file, format);
+      const { requestId } = await convertApi(file, "jpg");
       setRequestId(requestId);
     } catch (err) {
       console.error("변환 실패:", err);
@@ -60,11 +59,8 @@ export function Main() {
       <div className="w-full max-w-5xl">
         <ConvertContainer
           txtUrl={txtUrl}
-          // setTxtUrl={setTxtUrl}
           status={status}
-          // setStatus={setStatus}
           percent={percent}
-          // setPercent={setPercent}
           handleConvert={handleConvert}
         />
       </div>

@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { getCurrentUser } from "@/shared/lib/userStore";
 
-import { Format, formatOptions } from "../types";
+import { Format } from "../types";
 
 interface UploadFormProps {
   onConvert: (file: File, format: Format) => void;
@@ -19,7 +19,7 @@ export function UploadForm({ onConvert, onRequestLogin }: UploadFormProps) {
 
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [format, setFormat] = useState<Format>("jpg");
+  // const [format, setFormat] = useState<Format>("jpg");
 
   const internalDropHandler = useCallback(
     (acceptedFiles: File[]) => {
@@ -45,7 +45,7 @@ export function UploadForm({ onConvert, onRequestLogin }: UploadFormProps) {
       "image/png": [".png"],
       "image/webp": [".webp"],
     },
-    maxSize: 10 * 1024 * 1024,
+    maxSize: 50 * 1024 * 1024,
     multiple: false,
   });
 
@@ -58,7 +58,7 @@ export function UploadForm({ onConvert, onRequestLogin }: UploadFormProps) {
       return;
     }
 
-    onConvert(file, format);
+    onConvert(file, "jpg"); // 여기도 고정
   };
 
   return (
@@ -85,30 +85,12 @@ export function UploadForm({ onConvert, onRequestLogin }: UploadFormProps) {
 
       {/* 포맷 선택 & 변환 */}
       {file && (
-        <>
-          <div className="flex gap-2">
-            {formatOptions.map((f) => (
-              <button
-                key={f}
-                onClick={() => setFormat(f)}
-                className={`rounded border border-green-500 px-3 py-1 text-sm capitalize ${
-                  format === f
-                    ? "bg-green-600 text-black"
-                    : "bg-black text-green-300 hover:bg-green-800 hover:text-white"
-                }`}
-              >
-                {f}
-              </button>
-            ))}
-          </div>
-
-          <Button
-            className="bg-green-500 text-black hover:bg-green-400"
-            onClick={handleConvert}
-          >
-            Convert Image
-          </Button>
-        </>
+        <Button
+          className="bg-green-500 text-black hover:bg-green-400"
+          onClick={handleConvert}
+        >
+          Convert Image
+        </Button>
       )}
     </div>
   );
