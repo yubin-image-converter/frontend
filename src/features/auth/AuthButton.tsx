@@ -40,14 +40,29 @@ export function AuthButton() {
   }, []);
 
   const handleLogout = () => logoutUser();
+
   return (
     <>
       <button
         onClick={() => setOpen(true)}
-        className="font-mono text-sm text-green-600 transition hover:text-green-300"
+        className="font-mono text-[12px] text-green-600 transition hover:text-green-300 sm:text-sm"
       >
-        ▸ {user ? "User" : "Sign in"}
+        <span className="hidden sm:inline">
+          <span className="tracking-tight">
+            {user
+              ? `[$ whoami: ${user.email.split("@")[0]}]`
+              : `[ login required ]`}
+          </span>
+        </span>
+        <span className="sm:hidden">
+          [
+          <span className="tracking-tight">
+            {user ? user.email.split("@")[0] : "login"}
+          </span>
+          ]
+        </span>
       </button>
+
       <AuthModal
         open={open}
         onClose={() => setOpen(false)}

@@ -5,12 +5,28 @@ interface ProgressBarProps {
 }
 
 export function ProgressBar({ percent }: ProgressBarProps) {
-  const totalBars = 30;
+  const [totalBars, setTotalBars] = useState(30); // 기본값
+
+  // 뷰포트 기준으로 bar 길이 설정
+  useEffect(() => {
+    const updateBarLength = () => {
+      const width = window.innerWidth;
+      if (width < 400)
+        setTotalBars(20); // 모바일
+      else if (width < 768)
+        setTotalBars(30); // 태블릿
+      else setTotalBars(40); // 데스크탑
+    };
+
+    updateBarLength(); // 초기 설정
+    window.addEventListener("resize", updateBarLength);
+    return () => window.removeEventListener("resize", updateBarLength);
+  }, []);
 
   // █ 커서 깜빡임
   const [showCursor, setShowCursor] = useState(true);
   useEffect(() => {
-    const interval = setInterval(() => setShowCursor((prev) => !prev), 500);
+    const interval = setInterval(() => setShowCursor((prev) => !prev), 0);
     return () => clearInterval(interval);
   }, []);
 
@@ -24,7 +40,7 @@ export function ProgressBar({ percent }: ProgressBarProps) {
       }, 80);
       return () => clearInterval(interval);
     }
-  }, [percent, spinnerFrames.length]);
+  }, [percent]);
 
   // Done 표시 딜레이
   const [showDone, setShowDone] = useState(false);
@@ -59,7 +75,7 @@ export function ProgressBar({ percent }: ProgressBarProps) {
         <span>Progress</span>
         <span>{percent.toFixed(0)}%</span>
       </div>
-      <div className="w-full rounded border border-green-700 bg-black p-2">
+      <div className="w-full rounded border border-green-700 bg-black py-2">
         <pre className="whitespace-pre text-center">
           [{paddedText}]
           {showCursor && percent < 100 && <span className="ml-1">█</span>}
