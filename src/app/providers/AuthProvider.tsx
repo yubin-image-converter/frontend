@@ -11,7 +11,7 @@ import { getCookie } from "@/utils/getCookie";
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
-  const message = useTypewriterLoop("Loading ...", 80, 2000); // ✅ 반복 메시지
+  const message = useTypewriterLoop("Loading...", 80, 2000);
 
   useEffect(() => {
     const token = getCookie("accessToken");
