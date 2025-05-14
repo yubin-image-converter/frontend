@@ -70,15 +70,15 @@ export function UploadForm({
       return;
     }
 
-    onConvert(file, "jpg"); // 여기도 고정
+    onConvert(file, "jpg");
   };
 
   return (
-    <div className="flex flex-col items-center gap-4">
+    <div className="flex w-full max-w-full flex-col items-center gap-4 sm:px-4">
       {/* 업로드 박스 */}
       <div
         {...getRootProps()}
-        className="w-full max-w-md cursor-pointer rounded border-2 border-dashed border-green-500 bg-black p-8 text-center text-green-500 hover:bg-[#111]"
+        className="w-full max-w-xs cursor-pointer rounded border-2 border-dashed border-green-500 bg-black p-6 text-center text-green-500 hover:bg-[#111] sm:max-w-sm sm:p-8 md:max-w-md"
       >
         <input {...getInputProps()} />
         {previewUrl ? (
@@ -95,11 +95,11 @@ export function UploadForm({
         )}
       </div>
 
-      {/* 포맷 선택 & 변환 */}
+      {/* 변환 및 리셋 */}
       {file && (
-        <div className="mt-2 flex gap-4">
+        <div className="mt-2 flex w-full max-w-xs flex-col justify-center gap-4 sm:max-w-md sm:flex-row">
           <Button
-            className="bg-green-500 text-black hover:bg-green-400"
+            className="w-full bg-green-500 text-black hover:bg-green-400 sm:w-auto"
             onClick={handleConvert}
           >
             Convert Image
@@ -108,7 +108,7 @@ export function UploadForm({
           {(status === "success" || status === "error") && (
             <Button
               variant="outline"
-              className="border-green-600 bg-black text-green-300 hover:bg-green-700 hover:text-white"
+              className="w-full border-green-600 bg-black text-green-300 hover:bg-green-700 hover:text-white sm:w-auto"
               onClick={handleReset}
             >
               Reset Upload

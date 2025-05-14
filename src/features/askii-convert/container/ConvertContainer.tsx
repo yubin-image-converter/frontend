@@ -27,10 +27,10 @@ export function ConvertContainer({
   const [authOpen, setAuthOpen] = useState(false);
 
   return (
-    <div className="flex flex-col gap-6 px-4 transition-all duration-300">
+    <div className="flex flex-col gap-6 px-4 transition-all duration-300 sm:px-6 lg:px-8">
       {/* 업로드 & 결과 패널 */}
       <div
-        className={`mx-auto flex max-w-none flex-col items-center gap-6 transition-all duration-500 md:flex-row ${
+        className={`mx-auto flex w-full max-w-full flex-col items-center gap-6 transition-all duration-500 md:flex-row ${
           txtUrl ? "md:items-start md:justify-between" : "md:justify-center"
         }`}
       >
@@ -41,7 +41,7 @@ export function ConvertContainer({
           onReset={onReset}
         />
         {txtUrl && (
-          <div className="w-full min-w-0 max-w-[768px] flex-1">
+          <div className="w-full min-w-0 flex-1 md:max-w-[768px]">
             <ConvertedImagePreview txtUrl={txtUrl} />
           </div>
         )}

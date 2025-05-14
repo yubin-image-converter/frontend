@@ -10,14 +10,14 @@ export function ConvertedImagePreview({ txtUrl }: Props) {
   const [asciiContent, setAsciiContent] = useState<string>("Loading...");
 
   useEffect(() => {
-    console.log("txtUrl:", txtUrl); // undefined, null, 잘못된 값 확인
+    console.log("txtUrl:", txtUrl);
     if (!txtUrl || !txtUrl.startsWith("http")) {
       console.warn("❌ 잘못된 txtUrl:", txtUrl);
       return;
     }
 
     axiosInstance
-      .get(txtUrl, { responseType: "text" }) // <- responseType 명시!
+      .get(txtUrl, { responseType: "text" })
       .then((res) => setAsciiContent(res.data))
       .catch((err) => {
         console.error("❌ ASCII 파일 불러오기 실패:", err);
@@ -41,14 +41,14 @@ export function ConvertedImagePreview({ txtUrl }: Props) {
   };
 
   return (
-    <div className="w-full flex-1 rounded border border-green-600 bg-black p-4 text-green-300 md:max-w-3xl">
+    <div className="w-full max-w-full flex-1 rounded border border-green-600 bg-black p-4 text-green-300 sm:max-w-2xl md:max-w-3xl">
       <p className="mb-2 font-bold">ASCII Result:</p>
-      <pre className="max-h-[500px] overflow-auto whitespace-pre rounded border border-green-700 bg-black p-2 font-mono text-[10px] leading-[0.7em] text-green-300 shadow-inner">
+      <pre className="max-h-[500px] overflow-auto whitespace-pre-wrap break-words rounded border border-green-700 bg-black p-2 font-mono text-[10px] leading-[0.7em] text-green-300 shadow-inner">
         {asciiContent}
       </pre>
       <button
         onClick={handleDownload}
-        className="mt-4 inline-block rounded border border-green-600 bg-black px-4 py-2 font-mono text-sm text-green-300 hover:bg-green-700 hover:text-white"
+        className="mt-4 w-full rounded border border-green-600 bg-black px-4 py-2 font-mono text-sm text-green-300 hover:bg-green-700 hover:text-white sm:w-auto"
       >
         Download ASCII
       </button>
