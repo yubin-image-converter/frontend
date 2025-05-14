@@ -41,9 +41,9 @@ export function ConvertedImagePreview({ txtUrl }: Props) {
   };
 
   return (
-    <div className="w-full max-w-full flex-1 rounded border border-green-600 bg-black p-4 text-green-300 sm:max-w-2xl md:max-w-3xl">
+    <div className="w-full rounded border border-green-600 bg-black p-4 text-green-300 md:max-w-[768px]">
       <p className="mb-2 font-bold">ASCII Result:</p>
-      <pre className="max-h-[500px] overflow-auto whitespace-pre-wrap break-words rounded border border-green-700 bg-black p-2 font-mono text-[10px] leading-[0.7em] text-green-300 shadow-inner">
+      <pre className="max-h-[500px] overflow-auto whitespace-pre rounded border border-green-700 bg-black p-2 font-mono text-[10px] leading-[0.7em] text-green-300 shadow-inner">
         {asciiContent}
       </pre>
       <button
