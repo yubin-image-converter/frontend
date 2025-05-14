@@ -1,6 +1,6 @@
 import axiosInstance from "./axiosInstance";
 
-export async function convertImage(
+export async function convertApi(
   file: File,
   format: string,
 ): Promise<{ requestId: string; userId: string }> {

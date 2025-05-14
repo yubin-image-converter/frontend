@@ -3,5 +3,5 @@
  */
 
 export * from "./axiosInstance";
-export * from "./convertImage";
+export * from "./convertApi";
 export * from "./userStore";
