@@ -20,7 +20,7 @@ export function useSocket({
   useEffect(() => {
     if (!userId) return;
 
-    const socket = io("http://localhost:4000", {
+    const socket = io(import.meta.env.VITE_SOCKET_SERVER_URL, {
       path: "/socket.io",
       auth: { userId },
     });
