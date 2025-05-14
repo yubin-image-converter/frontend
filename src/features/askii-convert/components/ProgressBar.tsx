@@ -76,7 +76,7 @@ export function ProgressBar({ percent }: ProgressBarProps) {
         <span>{percent.toFixed(0)}%</span>
       </div>
       <div className="w-full rounded border border-green-700 bg-black py-2">
-        <pre className="whitespace-pre text-center">
+        <pre className="overflow-hidden whitespace-pre-wrap break-words text-center">
           [{paddedText}]
           {showCursor && percent < 100 && <span className="ml-1">█</span>}
         </pre>
