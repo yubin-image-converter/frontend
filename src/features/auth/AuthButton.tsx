@@ -1,21 +1,12 @@
+import { useAtomValue } from "jotai";
 import { useEffect, useState } from "react";
 
-import { setCurrentUser } from "@/shared/lib";
-import axiosInstance from "@/shared/lib/axiosInstance";
-import { logoutUser } from "@/shared/lib/logoutUser";
-import { getCookie } from "@/utils/getCookie";
+import { userAtom } from "@/shared/store/userAtom";
 
 import { AuthModal } from "./AuthModal";
 
-interface GoogleUser {
-  name: string;
-  email: string;
-  publicId: string;
-  provider: string;
-}
-
 export function AuthButton() {
-  const [user, setUser] = useState<GoogleUser | null>(null);
+  const user = useAtomValue(userAtom);
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -27,19 +18,6 @@ export function AuthButton() {
       window.history.replaceState({}, document.title, cleanUrl);
     }
   }, []);
-
-  useEffect(() => {
-    const token = getCookie("accessToken");
-    if (!token) return;
-
-    axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-    axiosInstance.get("/users/me").then((res) => {
-      setUser(res.data);
-      setCurrentUser(res.data);
-    });
-  }, []);
-
-  const handleLogout = () => logoutUser();
 
   return (
     <>
@@ -63,12 +41,7 @@ export function AuthButton() {
         </span>
       </button>
 
-      <AuthModal
-        open={open}
-        onClose={() => setOpen(false)}
-        user={user}
-        onLogout={handleLogout}
-      />
+      <AuthModal open={open} onClose={() => setOpen(false)} />
     </>
   );
 }

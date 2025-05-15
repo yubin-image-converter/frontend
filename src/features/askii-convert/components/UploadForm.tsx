@@ -1,3 +1,4 @@
+import { useAtom } from "jotai";
 import { CloudUpload } from "lucide-react";
 import { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
@@ -5,11 +6,10 @@ import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { getCurrentUser } from "@/shared/lib/userStore";
-
-import { Format } from "../types";
-import { useAtom } from "jotai";
 import { statusAtom } from "@/shared/store/convertAtoms";
 import { useResetConversionState } from "@/shared/store/resetAtoms";
+
+import { Format } from "../types";
 
 interface UploadFormProps {
   onConvert: (file: File, format: Format) => void;

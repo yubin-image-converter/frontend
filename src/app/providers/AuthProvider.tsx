@@ -1,15 +1,15 @@
-// src/app/providers/AuthProvider.tsx
-
+import { useSetAtom } from "jotai";
 import { ReactNode, useEffect, useState } from "react";
 
-import { useTypewriterLoop } from "@/shared/hooks/useTypewriterLoop"; // ✅ 추가
+import { useTypewriterLoop } from "@/shared/hooks/useTypewriterLoop";
 import axiosInstance from "@/shared/lib/axiosInstance";
-import { setCurrentUser } from "@/shared/lib/userStore";
+import { userAtom } from "@/shared/store/userAtom";
 import { GoogleUser } from "@/types/User";
 import { getCookie } from "@/utils/getCookie";
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
+  const setUser = useSetAtom(userAtom);
 
   const message = useTypewriterLoop("Loading...", 80, 2000);
 
@@ -25,7 +25,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const fetchUser = async () => {
       try {
         const res = await axiosInstance.get<GoogleUser>("/users/me");
-        setCurrentUser(res.data);
+        setUser(res.data);
       } catch (err) {
         console.error("유저 정보 불러오기 실패", err);
       } finally {
@@ -34,7 +34,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
 
     fetchUser();
-  }, []);
+  }, [setUser]);
 
   if (loading) {
     return (

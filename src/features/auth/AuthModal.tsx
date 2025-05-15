@@ -1,19 +1,19 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import { LogIn, LogOut, UserCircle } from "lucide-react";
+import { useAtomValue } from "jotai";
 
 import { Button } from "@/components/ui/button";
+import { userAtom } from "@/shared/store/userAtom";
+import { logoutUser } from "@/shared/lib/logoutUser";
 
 interface AuthModalProps {
   open: boolean;
   onClose: () => void;
-  user: {
-    name: string;
-    email: string;
-  } | null;
-  onLogout: () => void;
 }
 
-export function AuthModal({ open, onClose, user, onLogout }: AuthModalProps) {
+export function AuthModal({ open, onClose }: AuthModalProps) {
+  const user = useAtomValue(userAtom);
+
   const handleLogin = () => {
     window.location.href =
       import.meta.env.VITE_AUTHENTICATION_SERVER_URL +
@@ -37,7 +37,7 @@ export function AuthModal({ open, onClose, user, onLogout }: AuthModalProps) {
                 {user.email}
               </div>
               <Button
-                onClick={onLogout}
+                onClick={logoutUser}
                 className="max-w-full border border-green-700 bg-black px-4 py-1 font-mono text-green-300 hover:bg-green-700 hover:text-black"
               >
                 <LogOut size={14} className="mr-1" />
