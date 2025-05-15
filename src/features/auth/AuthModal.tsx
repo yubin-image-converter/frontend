@@ -1,10 +1,10 @@
 import * as Dialog from "@radix-ui/react-dialog";
-import { LogIn, LogOut, UserCircle } from "lucide-react";
 import { useAtomValue } from "jotai";
+import { LogIn, LogOut, UserCircle } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { useLogout } from "@/shared/hooks/useLogout";
 import { userAtom } from "@/shared/store/userAtom";
-import { logoutUser } from "@/shared/lib/logoutUser";
 
 interface AuthModalProps {
   open: boolean;
@@ -13,6 +13,7 @@ interface AuthModalProps {
 
 export function AuthModal({ open, onClose }: AuthModalProps) {
   const user = useAtomValue(userAtom);
+  const logout = useLogout();
 
   const handleLogin = () => {
     window.location.href =
@@ -37,7 +38,7 @@ export function AuthModal({ open, onClose }: AuthModalProps) {
                 {user.email}
               </div>
               <Button
-                onClick={logoutUser}
+                onClick={logout}
                 className="max-w-full border border-green-700 bg-black px-4 py-1 font-mono text-green-300 hover:bg-green-700 hover:text-black"
               >
                 <LogOut size={14} className="mr-1" />
