@@ -1,18 +1,31 @@
-// // src/app/providers/SocketProvider.tsx
-// import { ReactNode } from "react";
+import { useAtomValue } from "jotai";
+import { useEffect, useState } from "react";
+import { io, Socket } from "socket.io-client";
 
-// import { useSocket } from "@/features/askii-convert/hooks/useSocket";
-// import { getCurrentUser } from "@/shared/lib/userStore";
+import { SocketContext } from "@/shared/contexts/SocketContext";
+import { userAtom } from "@/shared/store/userAtom";
 
-// export function SocketProvider({ children }: { children: ReactNode }) {
-//   const userId = getCurrentUser()?.publicId ?? "";
+export function SocketProvider({ children }: { children: React.ReactNode }) {
+  const [socket, setSocket] = useState<Socket | null>(null);
+  const user = useAtomValue(userAtom);
 
-//   // useSocket({
-//   //   userId,
-//   //   onAsciiComplete: (msg) => {
-//   //     console.log("✅ ASCII complete from global socket:", msg);
-//   //   },
-//   // });
+  useEffect(() => {
+    if (!user?.publicId) return;
 
-//   return <>{children}</>;
-// }
+    const socketInstance = io(import.meta.env.VITE_SOCKET_SERVER_URL, {
+      transports: ["websocket"],
+      query: { userId: user.publicId },
+    });
+
+    setSocket(socketInstance);
+    return () => {
+      socketInstance.disconnect();
+    };
+  }, [user?.publicId]);
+
+  return (
+    <SocketContext.Provider value={{ socket }}>
+      {children}
+    </SocketContext.Provider>
+  );
+}

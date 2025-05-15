@@ -1,99 +1,45 @@
 import { useEffect, useState } from "react";
-import { io, Socket } from "socket.io-client";
 
-import { useTypewriterLoop } from "@/shared/hooks";
-
-interface Worker {
-  id: string;
-  status: "idle" | "converting" | "error";
-}
+import { useSocketContext } from "@/shared/hooks/useSocketContext";
 
 export function WorkerPanel() {
-  const [workers, setWorkers] = useState<Worker[]>([]);
-  const message = useTypewriterLoop(
-    "Waiting for worker connection...",
-    80,
-    2000,
-  );
+  const { socket } = useSocketContext();
+  const [statusMap, setStatusMap] = useState<Record<string, string>>({});
 
   useEffect(() => {
-    const socket: Socket = io(import.meta.env.VITE_SOCKET_SERVER_URL);
+    if (!socket) return;
 
-    socket.on("connect", () => {
-      console.log("워커 패널 소켓 연결됨:", socket.id);
-    });
+    const handleStatus = (data: Record<string, string>) => {
+      setStatusMap(data);
+    };
 
-    socket.on(
-      "worker_status",
-      (data: { workerId: string; status: Worker["status"] }) => {
-        setWorkers((prev) => {
-          const others = prev.filter((w) => w.id !== data.workerId);
-          return [...others, { id: data.workerId, status: data.status }];
-        });
-      },
-    );
+    socket.on("worker_status", handleStatus);
 
     return () => {
-      socket.disconnect();
+      socket.off("worker_status", handleStatus);
     };
-  }, []);
-
-  const renderTerminalLogs = () => {
-    if (workers.length === 0) {
-      return [`$ ascii_worker --standby`, `>> ${message}`];
-    }
-
-    const active = workers.filter((w) => w.status === "converting").length;
-    const errored = workers.filter((w) => w.status === "error").length;
-
-    const logs: string[] = [`$ ascii_worker --status`];
-
-    if (active > 0) logs.push(`>> ${active} worker(s) converting...`);
-    if (errored > 0) logs.push(`>> ${errored} worker(s) failed.`);
-    if (active === 0 && errored === 0)
-      logs.push(">> All workers are standing by.");
-
-    return logs;
-  };
+  }, [socket]);
 
   return (
-    <div className="w-full rounded border border-green-500 bg-black p-6 font-mono text-base text-green-300">
-      <h3 className="mb-3 text-lg font-bold uppercase tracking-wider text-green-400">
-        [ Worker Status Panel ]
-      </h3>
-
-      {/* 터미널 스타일 로그 출력 */}
-      <div className="mb-4 whitespace-pre-line text-sm leading-relaxed text-green-400">
-        {renderTerminalLogs().map((line, i) => (
-          <div key={i} className="animate-fadeIn">
-            {line}
-          </div>
-        ))}
-      </div>
-
-      {/* 워커 리스트 */}
-      {workers.length > 0 && (
-        <div className="max-h-60 overflow-y-auto pr-2">
-          {workers.map((worker) => (
-            <div
-              key={worker.id}
-              className="mb-2 flex justify-between border-b border-green-700 pb-1 text-sm"
-            >
-              <span className="w-44 truncate">{worker.id}</span>
+    <div className="w-full max-w-full rounded border border-green-700 p-4 text-sm text-green-300">
+      <div className="mb-2 font-bold">Active Workers</div>
+      {Object.keys(statusMap).length === 0 ? (
+        <div className="text-green-600">No active workers.</div>
+      ) : (
+        <ul className="space-y-1">
+          {Object.entries(statusMap).map(([id, status]) => (
+            <li key={id} className="flex items-center justify-between">
+              <span>{id}</span>
               <span
-                className={`font-bold ${
-                  worker.status === "idle"
-                    ? "text-green-400"
-                    : worker.status === "converting"
-                      ? "text-yellow-300"
-                      : "text-red-400"
-                }`}
+                className={
+                  status === "connected" ? "text-green-400" : "text-red-400"
+                }
               >
-                {worker.status.toUpperCase()}
+                {status}
               </span>
-            </div>
+            </li>
           ))}
-        </div>
+        </ul>
       )}
     </div>
   );

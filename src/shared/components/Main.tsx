@@ -1,9 +1,8 @@
 // src/shared/components/Main.tsx
-import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import { useAtom, useSetAtom } from "jotai";
 import { useCallback, useEffect } from "react";
 
 import { ConvertContainer } from "@/features/askii-convert/container/ConvertContainer";
-import { useSocket } from "@/features/askii-convert/hooks/useSocket";
 import { fetchAsciiResult } from "@/features/askii-convert/services/convertApi";
 import { Format } from "@/features/askii-convert/types";
 import {
@@ -15,7 +14,7 @@ import {
 } from "@/shared/store/convertAtoms";
 
 import { convertApi } from "../lib";
-import { userAtom } from "../store/userAtom";
+import { useSocketContext } from "../hooks/useSocketContext";
 
 export function Main() {
   const setStatus = useSetAtom(statusAtom);
@@ -24,8 +23,7 @@ export function Main() {
   const [targetPercent, setTargetPercent] = useAtom(targetPercentAtom);
   const [requestId, setRequestId] = useAtom(requestIdAtom);
 
-  const currentUser = useAtomValue(userAtom);
-  const userId = currentUser?.publicId ?? "";
+  const { socket } = useSocketContext();
 
   const handleAsciiComplete = useCallback(() => {
     console.log("🎉 ASCII 변환 완료 후처리");
@@ -54,6 +52,18 @@ export function Main() {
     return () => clearInterval(id);
   }, [targetPercent, setPercent]);
 
+  useEffect(() => {
+    if (!socket) return;
+
+    socket.on("ascii_complete", handleAsciiComplete);
+    socket.on("progress_update", handleProgressUpdate);
+
+    return () => {
+      socket.off("ascii_complete", handleAsciiComplete);
+      socket.off("progress_update", handleProgressUpdate);
+    };
+  }, [socket, handleAsciiComplete, handleProgressUpdate]);
+
   const handleConvert = async (file: File, format: Format = "jpg") => {
     try {
       setStatus("uploading");
@@ -67,14 +77,6 @@ export function Main() {
       setStatus("error");
     }
   };
-
-  useSocket({
-    userId,
-    onAsciiComplete: handleAsciiComplete,
-    onProgressUpdate: handleProgressUpdate,
-    setTxtUrl,
-    setStatus,
-  });
 
   return (
     <main className="flex flex-1 items-center justify-center p-4">

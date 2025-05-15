@@ -1,19 +1,12 @@
 // ConvertContainer.tsx
-import { useAtom, useAtomValue } from "jotai";
+import { useAtom } from "jotai";
 import { useState } from "react";
 
 import { AuthModal } from "@/features/auth/AuthModal";
-import { logoutUser } from "@/shared/lib/logoutUser";
-import { getCurrentUser } from "@/shared/lib/userStore";
-import {
-  percentAtom,
-  statusAtom,
-  txtUrlAtom,
-} from "@/shared/store/convertAtoms";
+import { statusAtom, txtUrlAtom } from "@/shared/store/convertAtoms";
 
 import { ConvertedImagePreview, UploadForm, WorkerPanel } from "../components";
 import { AsciiLoadingPanel } from "../components/AsciiLoadingPanel";
-import { userAtom } from "@/shared/store/userAtom";
 
 interface Props {
   handleConvert: (file: File) => void;
