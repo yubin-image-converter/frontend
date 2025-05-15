@@ -1,11 +1,13 @@
-import { useSetAtom } from "jotai";
+// src/app/providers/AuthProvider.tsx
+
 import { ReactNode, useEffect, useState } from "react";
+import { useSetAtom } from "jotai";
 
 import { useTypewriterLoop } from "@/shared/hooks/useTypewriterLoop";
 import axiosInstance from "@/shared/lib/axiosInstance";
-import { userAtom } from "@/shared/store/userAtom";
 import { GoogleUser } from "@/types/User";
 import { getCookie } from "@/utils/getCookie";
+import { userAtom } from "@/shared/store/userAtom";
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
@@ -14,7 +16,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const message = useTypewriterLoop("Loading...", 80, 2000);
 
   useEffect(() => {
-    const token = getCookie("accessToken");
+    // 1️⃣ accessToken URL에서 추출 → 쿠키 저장 → URL 정리
+    const urlParams = new URLSearchParams(window.location.search);
+    const accessTokenFromUrl = urlParams.get("accessToken");
+
+    if (accessTokenFromUrl) {
+      document.cookie = `accessToken=${accessTokenFromUrl}; path=/; max-age=3600`;
+      const cleanUrl = window.location.origin + window.location.pathname;
+      window.history.replaceState({}, document.title, cleanUrl);
+    }
+
+    // 2️⃣ token 확인 (URL 또는 쿠키)
+    const token = accessTokenFromUrl || getCookie("accessToken");
     if (!token) {
       setLoading(false);
       return;
