@@ -24,13 +24,13 @@ export function ConvertContainer({ handleConvert }: Props) {
 
   // jotai 상태 가져오기
   const [txtUrl] = useAtom(txtUrlAtom);
-  const [status, setStatus] = useAtom(statusAtom);
+  const [status] = useAtom(statusAtom);
   const [percent] = useAtom(percentAtom);
 
-  const handleReset = () => {
-    setStatus("idle");
-    // 추가적으로 필요하면 여기서 상태 초기화 더 가능
-  };
+  // const handleReset = () => {
+  //   setStatus("idle");
+  //   // 추가적으로 필요하면 여기서 상태 초기화 더 가능
+  // };
 
   return (
     <div className="flex flex-col gap-6 px-4 transition-all duration-300 sm:px-6 lg:px-8">
@@ -43,8 +43,6 @@ export function ConvertContainer({ handleConvert }: Props) {
           <UploadForm
             onConvert={handleConvert}
             onRequestLogin={() => setAuthOpen(true)}
-            status={status}
-            onReset={handleReset}
           />
         </div>
 

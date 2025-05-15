@@ -7,30 +7,29 @@ import { Button } from "@/components/ui/button";
 import { getCurrentUser } from "@/shared/lib/userStore";
 
 import { Format } from "../types";
+import { useAtom } from "jotai";
+import { statusAtom } from "@/shared/store/convertAtoms";
+import { useResetConversionState } from "@/shared/store/resetAtoms";
 
 interface UploadFormProps {
   onConvert: (file: File, format: Format) => void;
   onRequestLogin: () => void;
-  status: "idle" | "uploading" | "converting" | "success" | "error";
-  onReset: () => void;
 }
 
-export function UploadForm({
-  onConvert,
-  onRequestLogin,
-  status,
-  onReset,
-}: UploadFormProps) {
+export function UploadForm({ onConvert, onRequestLogin }: UploadFormProps) {
   const currentUser = getCurrentUser();
   const isLoggedIn = !!(currentUser && currentUser.email);
 
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
+  const [status] = useAtom(statusAtom); // ← 전역 상태에서 읽기
+  const resetConversion = useResetConversionState(); // ← 초기화 함수
+
   const handleReset = () => {
     setFile(null);
     setPreviewUrl(null);
-    onReset();
+    resetConversion(); // ← jotai 상태 초기화
   };
 
   const internalDropHandler = useCallback(
@@ -75,7 +74,6 @@ export function UploadForm({
 
   return (
     <div className="flex w-full max-w-full flex-col items-center gap-4 sm:px-4">
-      {/* 업로드 박스 */}
       <div
         {...getRootProps()}
         className="w-full max-w-xs cursor-pointer rounded border-2 border-dashed border-green-500 bg-black p-6 text-center text-green-500 hover:bg-[#111] sm:max-w-sm sm:p-8 md:max-w-md"
@@ -95,7 +93,6 @@ export function UploadForm({
         )}
       </div>
 
-      {/* 변환 및 리셋 */}
       {file && (
         <div className="mt-2 flex w-full max-w-xs flex-col justify-center gap-4 sm:max-w-md sm:flex-row">
           <Button
