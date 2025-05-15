@@ -1,48 +1,55 @@
-import { useEffect, useState } from "react";
+import { useAtomValue } from "jotai";
+import { useEffect, useRef, useState } from "react";
 
-interface ProgressBarProps {
-  percent: number;
-}
+import { percentAtom } from "@/shared/store/convertAtoms";
 
-export function ProgressBar({ percent }: ProgressBarProps) {
-  const [totalBars, setTotalBars] = useState(30); // 기본값
+export function ProgressBar() {
+  const percent = useAtomValue(percentAtom);
 
-  // 뷰포트 기준으로 bar 길이 설정
+  const [totalBars, setTotalBars] = useState(30);
+
   useEffect(() => {
     const updateBarLength = () => {
       const width = window.innerWidth;
-      if (width < 400)
-        setTotalBars(20); // 모바일
-      else if (width < 768)
-        setTotalBars(30); // 태블릿
-      else setTotalBars(40); // 데스크탑
+      if (width < 400) setTotalBars(20);
+      else if (width < 768) setTotalBars(30);
+      else setTotalBars(40);
     };
 
-    updateBarLength(); // 초기 설정
+    updateBarLength();
     window.addEventListener("resize", updateBarLength);
     return () => window.removeEventListener("resize", updateBarLength);
   }, []);
 
-  // █ 커서 깜빡임
   const [showCursor, setShowCursor] = useState(true);
   useEffect(() => {
     const interval = setInterval(() => setShowCursor((prev) => !prev), 500);
     return () => clearInterval(interval);
   }, []);
 
-  // Spinner 애니메이션
-  const spinnerFrames = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
+  const spinnerFrames = useRef([
+    "⠋",
+    "⠙",
+    "⠹",
+    "⠸",
+    "⠼",
+    "⠴",
+    "⠦",
+    "⠧",
+    "⠇",
+    "⠏",
+  ]);
   const [frameIndex, setFrameIndex] = useState(0);
+
   useEffect(() => {
     if (percent < 100) {
       const interval = setInterval(() => {
-        setFrameIndex((i) => (i + 1) % spinnerFrames.length);
+        setFrameIndex((i) => (i + 1) % spinnerFrames.current.length);
       }, 80);
       return () => clearInterval(interval);
     }
   }, [percent]);
 
-  // Done 표시 딜레이
   const [showDone, setShowDone] = useState(false);
   useEffect(() => {
     if (percent >= 100) {
@@ -53,7 +60,7 @@ export function ProgressBar({ percent }: ProgressBarProps) {
     }
   }, [percent]);
 
-  const spinner = spinnerFrames[frameIndex];
+  const spinner = spinnerFrames.current[frameIndex];
   let content =
     percent < 100
       ? `Loading... ${spinner}`
