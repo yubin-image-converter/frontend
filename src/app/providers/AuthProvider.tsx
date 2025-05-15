@@ -1,13 +1,13 @@
 // src/app/providers/AuthProvider.tsx
 
-import { ReactNode, useEffect, useState } from "react";
 import { useSetAtom } from "jotai";
+import { ReactNode, useEffect, useState } from "react";
 
 import { useTypewriterLoop } from "@/shared/hooks/useTypewriterLoop";
 import axiosInstance from "@/shared/lib/axiosInstance";
+import { userAtom } from "@/shared/store/userAtom";
 import { GoogleUser } from "@/types/User";
 import { getCookie } from "@/utils/getCookie";
-import { userAtom } from "@/shared/store/userAtom";
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
