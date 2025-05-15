@@ -1,6 +1,6 @@
 // src/shared/components/Main.tsx
 import { useAtom, useSetAtom } from "jotai";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect } from "react";
 
 import { ConvertContainer } from "@/features/askii-convert/container/ConvertContainer";
 import { fetchAsciiResult } from "@/features/askii-convert/services/convertApi";
@@ -21,7 +21,7 @@ export function Main() {
   const setTxtUrl = useSetAtom(txtUrlAtom);
   const setPercent = useSetAtom(percentAtom);
   const [targetPercent, setTargetPercent] = useAtom(targetPercentAtom);
-  const [requestId, setRequestId] = useAtom(requestIdAtom);
+  const [, setRequestId] = useAtom(requestIdAtom);
 
   const { socket } = useSocketContext();
 
