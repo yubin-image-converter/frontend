@@ -1,55 +1,53 @@
+// ConvertContainer.tsx
+import { useAtom } from "jotai";
 import { useState } from "react";
 
 import { AuthModal } from "@/features/auth/AuthModal";
 import { logoutUser } from "@/shared/lib/logoutUser";
 import { getCurrentUser } from "@/shared/lib/userStore";
+import {
+  percentAtom,
+  statusAtom,
+  txtUrlAtom,
+} from "@/shared/store/convertAtoms";
 
 import { ConvertedImagePreview, UploadForm, WorkerPanel } from "../components";
 import { AsciiLoadingPanel } from "../components/AsciiLoadingPanel";
-import { Format } from "../types";
 
 interface Props {
-  txtUrl: string | null;
-  handleConvert: (file: File, format: Format) => void;
-  status: "idle" | "uploading" | "converting" | "success" | "error";
-  onReset: () => void;
-  percent: number;
+  handleConvert: (file: File) => void;
 }
 
-export function ConvertContainer({
-  txtUrl,
-  handleConvert,
-  status,
-  onReset,
-  percent,
-}: Props) {
+export function ConvertContainer({ handleConvert }: Props) {
   const currentUser = getCurrentUser();
   const [authOpen, setAuthOpen] = useState(false);
 
+  // jotai 상태 가져오기
+  const [txtUrl] = useAtom(txtUrlAtom);
+  const [status, setStatus] = useAtom(statusAtom);
+  const [percent] = useAtom(percentAtom);
+
+  const handleReset = () => {
+    setStatus("idle");
+    // 추가적으로 필요하면 여기서 상태 초기화 더 가능
+  };
+
   return (
     <div className="flex flex-col gap-6 px-4 transition-all duration-300 sm:px-6 lg:px-8">
-      {/* 업로드 & 결과 패널 */}
-      {/* <div
-        className={`mx-auto flex w-full max-w-full flex-col items-center gap-6 transition-all duration-500 md:flex-row ${
-          txtUrl ? "md:items-start md:justify-between" : "md:justify-center"
-        }`}
-      > */}
       <div
         className={`mx-auto flex w-full max-w-full flex-col items-center gap-6 transition-all duration-500 md:flex-row ${
           txtUrl ? "md:items-start md:justify-between" : "md:justify-center"
         }`}
       >
-        {/* 좌측: UploadForm */}
         <div className="w-full max-w-[360px] shrink-0">
           <UploadForm
             onConvert={handleConvert}
             onRequestLogin={() => setAuthOpen(true)}
             status={status}
-            onReset={onReset}
+            onReset={handleReset}
           />
         </div>
 
-        {/* 우측: ASCII 결과 */}
         {txtUrl && (
           <div className="w-full min-w-0 flex-1 overflow-hidden md:max-w-[768px]">
             <ConvertedImagePreview txtUrl={txtUrl} />
@@ -57,7 +55,6 @@ export function ConvertContainer({
         )}
       </div>
 
-      {/* 로그인 모달 */}
       <AuthModal
         open={authOpen}
         onClose={() => setAuthOpen(false)}
@@ -65,7 +62,6 @@ export function ConvertContainer({
         onLogout={logoutUser}
       />
 
-      {/* 진행 상태 */}
       {status !== "idle" && (
         <>
           <AsciiLoadingPanel status={status} percent={percent} />

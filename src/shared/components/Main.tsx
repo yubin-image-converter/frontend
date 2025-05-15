@@ -1,43 +1,48 @@
-import { useCallback, useEffect, useState } from "react";
+// src/shared/components/Main.tsx
+import { useAtom, useSetAtom } from "jotai";
+import { useCallback, useEffect } from "react";
 
 import { ConvertContainer } from "@/features/askii-convert/container/ConvertContainer";
 import { useSocket } from "@/features/askii-convert/hooks/useSocket";
 import { fetchAsciiResult } from "@/features/askii-convert/services/convertApi";
+import { Format } from "@/features/askii-convert/types";
 import { getCurrentUser } from "@/shared/lib/userStore";
+import {
+  percentAtom,
+  requestIdAtom,
+  statusAtom,
+  targetPercentAtom,
+  txtUrlAtom,
+} from "@/shared/store/convertAtoms";
 
 import { convertApi } from "../lib";
 
 export function Main() {
-  const [txtUrl, setTxtUrl] = useState<string | null>(null);
-  const [status, setStatus] = useState<
-    "idle" | "uploading" | "converting" | "success" | "error"
-  >("idle");
-  const [percent, setPercent] = useState(0);
-  const [targetPercent, setTargetPercent] = useState(0);
-  const [requestId, setRequestId] = useState("");
+  const setStatus = useSetAtom(statusAtom);
+  const setTxtUrl = useSetAtom(txtUrlAtom);
+  const setPercent = useSetAtom(percentAtom);
+  const [targetPercent, setTargetPercent] = useAtom(targetPercentAtom);
+  const [requestId, setRequestId] = useAtom(requestIdAtom);
 
   const currentUser = getCurrentUser();
   const userId = currentUser?.publicId ?? "";
 
-  // ✅ 1. handleAsciiComplete에서 fetchAsciiResult 호출
-  const handleAsciiComplete = useCallback(
-    (_msg: any) => {
-      console.log("🎉 ASCII 변환 완료 후처리");
-      fetchAsciiResult(requestId).then((url) => {
-        if (url) setTxtUrl(url);
-        setStatus("success");
-      });
+  const handleAsciiComplete = useCallback(() => {
+    console.log("🎉 ASCII 변환 완료 후처리");
+    fetchAsciiResult(requestId).then((url) => {
+      if (url) setTxtUrl(url);
+      setStatus("success");
+    });
+  }, [requestId, setTxtUrl, setStatus]);
+
+  const handleProgressUpdate = useCallback(
+    (p: number) => {
+      console.log("✅ progress 수신:", p);
+      setTargetPercent(p);
     },
-    [requestId],
+    [setTargetPercent],
   );
 
-  // ✅ 2. handleProgressUpdate는 그대로 진행률 갱신만 담당
-  const handleProgressUpdate = useCallback((p: number) => {
-    console.log("✅ progress 수신:", p);
-    setTargetPercent(p); // ← 바로바로 퍼센트 반영
-  }, []);
-
-  // 부드럽게 percent를 targetPercent까지 올려주는 로직
   useEffect(() => {
     const id = setInterval(() => {
       setPercent((prev) => {
@@ -47,14 +52,14 @@ export function Main() {
       });
     }, 20);
     return () => clearInterval(id);
-  }, [targetPercent]);
+  }, [targetPercent, setPercent]);
 
-  const handleConvert = async (file: File) => {
+  const handleConvert = async (file: File, format: Format = "jpg") => {
     try {
       setStatus("uploading");
       setPercent(0);
       setTargetPercent(0);
-      const { requestId } = await convertApi(file, "jpg");
+      const { requestId } = await convertApi(file, format);
       setRequestId(requestId);
       setStatus("converting");
     } catch (err) {
@@ -62,14 +67,6 @@ export function Main() {
       setStatus("error");
     }
   };
-
-  // useEffect(() => {
-  //   if (!requestId) return;
-  //   fetchAsciiResult(requestId).then((url) => {
-  //     if (url) setTxtUrl(url);
-  //     setStatus("success");
-  //   });
-  // }, [requestId]);
 
   useSocket({
     userId,
@@ -82,16 +79,7 @@ export function Main() {
   return (
     <main className="flex flex-1 items-center justify-center p-4">
       <div className="w-full max-w-5xl">
-        <ConvertContainer
-          txtUrl={txtUrl}
-          status={status}
-          percent={percent}
-          handleConvert={handleConvert}
-          onReset={() => {
-            setStatus("idle");
-            setTxtUrl(null);
-          }}
-        />
+        <ConvertContainer handleConvert={handleConvert} />
       </div>
     </main>
   );
