@@ -62,7 +62,7 @@ export function ConvertContainer({ handleConvert }: Props) {
 
       {status !== "idle" && (
         <>
-          <AsciiLoadingPanel status={status} percent={percent} />
+          <AsciiLoadingPanel status={status} />
           <WorkerPanel />
         </>
       )}

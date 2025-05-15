@@ -4,10 +4,9 @@ import { StatusMessage } from "../components/StatusMessage";
 
 interface AsciiLoadingPanelProps {
   status: "uploading" | "converting" | "success" | "error";
-  percent: number;
 }
 
-export function AsciiLoadingPanel({ status, percent }: AsciiLoadingPanelProps) {
+export function AsciiLoadingPanel({ status }: AsciiLoadingPanelProps) {
   const showAsciiLoader = status === "uploading" || status === "converting";
 
   return (
@@ -16,9 +15,7 @@ export function AsciiLoadingPanel({ status, percent }: AsciiLoadingPanelProps) {
         <AsciiLoader message="Uploading image to server..." />
       )}
       <StatusMessage status={status} />
-      {(status === "converting" || status === "success") && (
-        <ProgressBar percent={percent} />
-      )}
+      {(status === "converting" || status === "success") && <ProgressBar />}
     </div>
   );
 }
