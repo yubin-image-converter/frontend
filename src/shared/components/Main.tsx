@@ -1,12 +1,11 @@
 // src/shared/components/Main.tsx
-import { useAtom, useSetAtom } from "jotai";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useCallback, useEffect } from "react";
 
 import { ConvertContainer } from "@/features/askii-convert/container/ConvertContainer";
 import { useSocket } from "@/features/askii-convert/hooks/useSocket";
 import { fetchAsciiResult } from "@/features/askii-convert/services/convertApi";
 import { Format } from "@/features/askii-convert/types";
-import { getCurrentUser } from "@/shared/lib/userStore";
 import {
   percentAtom,
   requestIdAtom,
@@ -16,6 +15,7 @@ import {
 } from "@/shared/store/convertAtoms";
 
 import { convertApi } from "../lib";
+import { userAtom } from "../store/userAtom";
 
 export function Main() {
   const setStatus = useSetAtom(statusAtom);
@@ -24,7 +24,7 @@ export function Main() {
   const [targetPercent, setTargetPercent] = useAtom(targetPercentAtom);
   const [requestId, setRequestId] = useAtom(requestIdAtom);
 
-  const currentUser = getCurrentUser();
+  const currentUser = useAtomValue(userAtom);
   const userId = currentUser?.publicId ?? "";
 
   const handleAsciiComplete = useCallback(() => {

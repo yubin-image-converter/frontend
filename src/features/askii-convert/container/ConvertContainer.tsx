@@ -1,5 +1,5 @@
 // ConvertContainer.tsx
-import { useAtom } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import { useState } from "react";
 
 import { AuthModal } from "@/features/auth/AuthModal";
@@ -13,19 +13,20 @@ import {
 
 import { ConvertedImagePreview, UploadForm, WorkerPanel } from "../components";
 import { AsciiLoadingPanel } from "../components/AsciiLoadingPanel";
+import { userAtom } from "@/shared/store/userAtom";
 
 interface Props {
   handleConvert: (file: File) => void;
 }
 
 export function ConvertContainer({ handleConvert }: Props) {
-  const currentUser = getCurrentUser();
+  // const currentUser = useAtomValue(userAtom);
   const [authOpen, setAuthOpen] = useState(false);
 
   // jotai 상태 가져오기
   const [txtUrl] = useAtom(txtUrlAtom);
   const [status] = useAtom(statusAtom);
-  const [percent] = useAtom(percentAtom);
+  // const [percent] = useAtom(percentAtom);
 
   // const handleReset = () => {
   //   setStatus("idle");
@@ -53,12 +54,7 @@ export function ConvertContainer({ handleConvert }: Props) {
         )}
       </div>
 
-      <AuthModal
-        open={authOpen}
-        onClose={() => setAuthOpen(false)}
-        user={currentUser}
-        onLogout={logoutUser}
-      />
+      <AuthModal open={authOpen} onClose={() => setAuthOpen(false)} />
 
       {status !== "idle" && (
         <>

@@ -1,13 +1,13 @@
-import { useAtom } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import { CloudUpload } from "lucide-react";
 import { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
-import { getCurrentUser } from "@/shared/lib/userStore";
 import { statusAtom } from "@/shared/store/convertAtoms";
 import { useResetConversionState } from "@/shared/store/resetAtoms";
+import { userAtom } from "@/shared/store/userAtom";
 
 import { Format } from "../types";
 
@@ -17,7 +17,7 @@ interface UploadFormProps {
 }
 
 export function UploadForm({ onConvert, onRequestLogin }: UploadFormProps) {
-  const currentUser = getCurrentUser();
+  const currentUser = useAtomValue(userAtom);
   const isLoggedIn = !!(currentUser && currentUser.email);
 
   const [file, setFile] = useState<File | null>(null);
