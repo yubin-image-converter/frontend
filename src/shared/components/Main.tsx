@@ -13,8 +13,8 @@ import {
   txtUrlAtom,
 } from "@/shared/store/convertAtoms";
 
-import { convertApi } from "../lib";
 import { useSocketContext } from "../hooks/useSocketContext";
+import { convertApi } from "../lib";
 
 export function Main() {
   const setStatus = useSetAtom(statusAtom);
@@ -54,6 +54,9 @@ export function Main() {
 
   useEffect(() => {
     if (!socket) return;
+    socket.onAny((event, ...args) => {
+      console.log("📦 any event from server:", event, args);
+    });
 
     socket.on("ascii_complete", handleAsciiComplete);
     socket.on("progress_update", handleProgressUpdate);
