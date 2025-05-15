@@ -14,6 +14,7 @@ export function AuthButton() {
     const accessToken = urlParams.get("accessToken");
     if (accessToken) {
       document.cookie = `accessToken=${accessToken}; path=/; max-age=3600`;
+      localStorage.setItem("accessToken", accessToken);
       const cleanUrl = window.location.origin + window.location.pathname;
       window.history.replaceState({}, document.title, cleanUrl);
     }

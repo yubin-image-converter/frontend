@@ -1,6 +1,6 @@
 // src/shared/components/Main.tsx
 import { useAtom, useSetAtom } from "jotai";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useRef } from "react";
 
 import { ConvertContainer } from "@/features/askii-convert/container/ConvertContainer";
 import { fetchAsciiResult } from "@/features/askii-convert/services/convertApi";
@@ -25,18 +25,24 @@ export function Main() {
 
   const { socket } = useSocketContext();
 
-  const handleAsciiComplete = useCallback(() => {
-    console.log("🎉 ASCII 변환 완료 후처리");
-    fetchAsciiResult(requestId).then((url) => {
-      if (url) setTxtUrl(url);
-      setStatus("success");
-    });
-  }, [requestId, setTxtUrl, setStatus]);
+  const handleAsciiComplete = useCallback(
+    (payload: { requestId: string }) => {
+      const { requestId } = payload;
+      console.log("🎉 ASCII 변환 완료 후처리:", requestId);
+
+      setRequestId(requestId);
+      fetchAsciiResult(requestId).then((url) => {
+        if (url) setTxtUrl(url);
+        setStatus("success");
+      });
+    },
+    [setRequestId, setTxtUrl, setStatus],
+  );
 
   const handleProgressUpdate = useCallback(
-    (p: number) => {
-      console.log("✅ progress 수신:", p);
-      setTargetPercent(p);
+    (payload: { progress: number }) => {
+      console.log("✅ progress 수신:", payload.progress);
+      setTargetPercent(payload.progress);
     },
     [setTargetPercent],
   );

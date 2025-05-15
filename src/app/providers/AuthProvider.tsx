@@ -22,6 +22,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     if (accessTokenFromUrl) {
       document.cookie = `accessToken=${accessTokenFromUrl}; path=/; max-age=3600`;
+      localStorage.setItem("accessToken", accessTokenFromUrl);
       const cleanUrl = window.location.origin + window.location.pathname;
       window.history.replaceState({}, document.title, cleanUrl);
     }
