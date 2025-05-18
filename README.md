@@ -36,13 +36,13 @@
 * 이미지 업로드 및 50MB 제한 설정
 * 변환 요청 진행 상황(Progress Bar) 실시간 표시
 * 변환 완료 시 ASCII 아트 프리뷰 및 다운로드
-* WebSocket을 통한 실시간 상태 업데이트
+* WebSocket을 통한 실시간 처리 상태 업데이트
 * 로그인 상태에 따라 UI 조건부 렌더링 (Google OAuth 기반)
 * ASCII 아트 렌더링 중 Typewriter 효과 제공
-* 워커(백엔드) 상태 패널 UI 구현 (HTTP polling 기반)
-* ASCII 아트 렌더링: iframe 미사용, fetch를 통해 .txt 파일을 불러와 직접 렌더링
+* 워커(백엔드) 상태 패널 UI
+* ASCII 아트 렌더링 - fetch를 통해 .txt 파일을 불러와 직접 렌더링
 * 로그인 상태 및 요청 상태 등 주요 상태는 Jotai atom으로 구성되어 전역에서 공유 및 제어됨
-* 워커 상태 패널은 API 서버로 주기적인 HTTP polling을 통해 각 워커의 연결 여부를 갱신함
+* 워커 상태 패널은 API 서버로 주기적인 HTTP polling을 통해 각 워커의 연결 여부를 갱신함(구현 예정)
 
 ---
 
@@ -56,7 +56,7 @@ src/
 ├── shared/              # 공통 훅, 컴포넌트, 컨텍스트, store, lib 등
 ├── types/               # 전역 타입 선언
 ├── utils/               # 유틸 함수 모음
-├── hooks/               # 전역 훅 (deprecated 예정)
+├── hooks/               # 전역 훅
 └── main.tsx             # 앱 진입점
 ```
 
